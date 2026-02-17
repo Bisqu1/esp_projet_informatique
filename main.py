@@ -1,3 +1,9 @@
+##############################################################################################################
+# Crée par Mathis Robinet, Rayen Rouz, Alexis Paiement
+# Crée le 2026-02-17
+#420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
+##############################################################################################################
+
 # This is a sample Python script.
 
 # Press Maj+F10 to execute it or replace it with your code.
