@@ -9,15 +9,15 @@
 rendement=5
 densite=4
 gravite=3
+debit=2
+hauteur=1
 
     #fonction equation central
-
-
 def equation(r,p,g,d,h):
     return r*p*g*d*h
 
 
 
 
-
-print(equation(rendement,densite,3,2,1,))
+    #appel fonction
+#print(equation(rendement,densite,gravite,debit,hauteur,))
