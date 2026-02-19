@@ -4,7 +4,7 @@ from pygame import MOUSEWHEEL, MOUSEBUTTONDOWN
 import loi_physique
 import random
 
-#Variable équation puissance théorique central hydro (Test)
+#Variable équation puissance théorique central hydro(Test)
 # P= densite * gravite * debit * hauteur * rendement
 rendement=5
 densite=4
