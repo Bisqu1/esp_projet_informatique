@@ -62,3 +62,4 @@ class WidgetGallery(QDialog):
 
     ## ajouter au layout
     top_layout.addWidget(self._style_combobox)
+   #

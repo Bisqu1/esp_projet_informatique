@@ -9,3 +9,4 @@ if __name__ == '__main__':
     gallery = WidgetGallery()
     gallery.show()
     sys.exit(app.exec())
+    #
