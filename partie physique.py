@@ -39,7 +39,6 @@ else:
     print("Il y a",p/1000-72000,"kW en surplus")
 
 #Graphique des valeurs de p (Chat GPT)
-
 filename = "scatter_power.csv"
 
 # --- Lecture des données existantes ---
