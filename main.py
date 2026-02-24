@@ -31,7 +31,10 @@ while 10 > débit or 1000 < débit:
 
 p = loi_physique.equation(rendement, masse_volumique, g, débit, hauteur)
 print(p/1000,"kW")
-if p/1000 >
+
+if p/1000 < 72000:
+    print("Il n'y a pas assez d'énergie pour alimenter tous les habitants du village")
+elif p/1000 >
 
 #graphique des valeurs de P
 
