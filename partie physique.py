@@ -4,9 +4,10 @@
 #420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
 ##############################################################################################################
 import numpy
-import matplotlib as plt
+import matplotlib.pyplot as plt
+import csv
 import loi_physique
-
+import os
 
 #exemple utilisation loi physique
 
@@ -34,9 +35,38 @@ print(p/1000,"kW")
 
 if p/1000 < 72000:
     print("Il n'y a pas assez d'énergie pour alimenter tous les habitants du village")
-elif p/1000 >
+else:
+    print("Il y a",p/1000-72000,"kW en surplus")
 
-#graphique des valeurs de P
+#Graphique des valeurs de p (Chat GPT)
 
+filename = "scatter_power.csv"
 
+# --- Lecture des données existantes ---
+powers = []
 
+if os.path.exists(filename):
+    with open(filename, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            powers.append(float(row[0]))  # on stocke juste P
+# Sinon, liste vide si premier run
+# Ajoute la nouvelle puissance
+powers.append(p)
+
+# --- Sauvegarde toutes les données dans le CSV ---
+with open(filename, 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    for p in powers:
+        writer.writerow([p])
+
+# --- Préparer les X automatiquement ---
+x = list(range(1, len(powers)+1))  # 1,2,3,... numéro du run automatique
+
+# --- Affichage scatter ---
+plt.scatter(x, powers)
+plt.xlabel("Numéro de run")
+plt.ylabel("Puissance (W)")
+plt.title("Puissance par run")
+plt.grid(True)
+plt.show()
