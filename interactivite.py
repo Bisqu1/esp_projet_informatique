@@ -1,6 +1,6 @@
 import pygame
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QFormLayout
 from pygame import MOUSEWHEEL, MOUSEBUTTONDOWN
 import sys
 import loi_physique
@@ -8,49 +8,24 @@ import random
 
 
 
-class Interface(QtWidgets.QWidget):
+class MyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Interface")
-        self.setGeometry(50, 50, 800, 600)
-        self.UIcomponents()
-        self.show()
-
-        window =QMainWindow()
+        layout = QFormLayout()
 
 
-
-        #layout = QVBoxLayout()
-        #layout.addWidget(label)
-        #self.setLayout(layout)
-
-
-
-
-
-    label = QLabel("LAAAABEEEEEEEEL")
-    label.setGeometry(50, 100, 150, 30)
-
-
-
-    def UIcomponents(self):
+        self.button = QtWidgets.QPushButton("Click me!")
         self.spinbox = QtWidgets.QSpinBox(self)
-        self.spinbox.setGeometry(50, 50, 1500, 300)
-        self.spinbox.valueChanged.connect(self.show_result())
+        self.spinbox.valueChanged.connect(self.update)
 
-        #self.layout = QtWidgets.QVBoxLayout(self)
-#
-        #self.layout.addWidget(self.spinbox)
-
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.button)
+        self.layout.addWidget(self.button)
 
 
-
-    def show_result(self):
-        # getting current value
-        value = self.spinbox.value()
-        # setting value of spin box to the label
-        self.label.setText("Value : " + str(value))
+    def update(self, value):
+        print(value)
 
 
 
@@ -58,15 +33,11 @@ class Interface(QtWidgets.QWidget):
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
 
-    widget = Interface()
+    widget = MyWidget()
     widget.resize(800, 600)
     widget.show()
 
     sys.exit(app.exec())
-
-
-
-
 
 
 
