@@ -6,18 +6,30 @@
 ##############################################################################################################
 
 
-rendement=5
-densite=4
-gravite=3
-debit=2
-hauteur=1
+#rendement=0.9
+#densite=1000
+#gravite=9.81
+#debit= 100
+#hauteur=50
 
     #fonction equation central
-def equation(r,p,g,d,h):
-    return r*p*g*d*h
+def calculer_puissance(Q ,h ,eta ,rho=1000,g=9.81):
+    """
+    Calcule la puissance d'une centrale hydroélectrique.
+    P = eta * rho * g * h * Q
+
+    Q: débit (m³/s)
+    h: hauteur de chute (m)
+    eta: rendement de la turbine [0,1]
+    g: gravité (m/s²)
+    rho: densité du fluide (kg/m³)
+    """
+    puissance_W= Q * h * eta * rho * g
+    puissance_MW = puissance_W/1000000
+    return puissance_MW
 
 
 
 
     #appel fonction
-#print(equation(rendement,densite,gravite,debit,hauteur,))
+#print(calculer_puissance(rendement,densite,gravite,debit,hauteur,), "MW")
