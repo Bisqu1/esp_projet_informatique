@@ -14,6 +14,6 @@ Simulation d'une centrale hydroélectrique.
 
 
 ## Librairies utilisées
-- pygame
+- Pyqt
 - matplotlib
 - numpy
