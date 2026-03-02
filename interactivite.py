@@ -55,16 +55,13 @@ class Interface(QtWidgets.QWidget):
         ligne_Q= QtWidgets.QHBoxLayout()  #crée layout horizontal qui va contenir toutes interactions avec  débit
 
         self.label_Q =QtWidgets.QLabel("débit (Q):")  #creation widget label
-        self.label_Q.setGeometry(30,560,300,30)  #position (x,y), dimension (w,h) du label
 
-        self.slider_Q = QtWidgets.QSlider(Qt.Horizontal, self)  #creation widget slider horizontal
-        self.slider_Q.setGeometry(140,560,300,30)
+        self.slider_Q = QtWidgets.QSlider(Qt.Horizontal)  #creation widget slider horizontal
         self.slider_Q.setRange(0,500)  #valeur max et min
         self.slider_Q.setValue(200)  #valeur depart
 
 
-        self.spinbox_Q = QtWidgets.QSpinBox(self)  #creation widget doublespinbox
-        self.spinbox_Q.setGeometry(460, 560, 120, 30)
+        self.spinbox_Q = QtWidgets.QSpinBox()  #creation widget doublespinbox
         self.spinbox_Q.setSuffix(" m³/s ")  # suffix(unité de mesure) de la valeur de doublespinbox
         self.spinbox_Q.setRange(0, 500)
         self.spinbox_Q.setValue(100)
@@ -80,15 +77,12 @@ class Interface(QtWidgets.QWidget):
         ligne_h= QtWidgets.QHBoxLayout()
 
         self.label_h = QtWidgets.QLabel("hauteur (h):")
-        self.label_h.setGeometry(30,620,100,30)
 
-        self.slider_h = QtWidgets.QSlider(Qt.Horizontal, self)
-        self.slider_h.setGeometry(140,620,300,30)
+        self.slider_h = QtWidgets.QSlider(Qt.Horizontal)
         self.slider_h.setRange(0,300)
         self.slider_h.setValue(50)
 
-        self.spinbox_h = QtWidgets.QSpinBox(self)
-        self.spinbox_h.setGeometry(460, 620, 120, 30)
+        self.spinbox_h = QtWidgets.QSpinBox()
         self.spinbox_h.setRange(0, 300)
         self.spinbox_h.setValue(50)
         self.spinbox_h.setSuffix(" m")
@@ -102,15 +96,12 @@ class Interface(QtWidgets.QWidget):
         ligne_eta= QtWidgets.QHBoxLayout()
 
         self.label_eta= QtWidgets.QLabel("Rendement (η):")
-        self.label_eta.setGeometry(30,680,110,30)
 
-        self.slider_eta = QtWidgets.QSlider(Qt.Horizontal,self)
-        self.slider_eta.setGeometry(140,680,300,30)
+        self.slider_eta = QtWidgets.QSlider(Qt.Horizontal)
         self.slider_eta.setRange(0,100)
         self.slider_eta.setValue(90)
 
-        self.spinbox_eta= QtWidgets.QDoubleSpinBox(self)
-        self.spinbox_eta.setGeometry(460,680,120,30)
+        self.spinbox_eta= QtWidgets.QDoubleSpinBox()
         self.spinbox_eta.setRange(0.0,1.0)
         self.spinbox_eta.setValue(0.90)
         self.spinbox_eta.setSingleStep(0.01)
@@ -134,8 +125,7 @@ class Interface(QtWidgets.QWidget):
         self.slider_eta.valueChanged.connect(lambda v: self.spinbox_eta.setValue(v / 100))  #quand valeur slider change (entier`[0,100]) divise par 100 pour setValue de spinbox en decimal
         self.spinbox_eta.valueChanged.connect(lambda v: self.slider_eta.setValue(int(v * 100)))  #spinbox change (decimal, [0,1]) multiplie par 100 pour setValue de slider en entier
 
-        #self.spinbox_Q.valueChanged.connect(self.update_debit)
-        #self.button.clicked.connect(self.bouton_click)
+
 
         # ---- CONNEXION CALCUL----
         self.slider_Q.valueChanged.connect(self.afficher_puissance)
@@ -146,17 +136,20 @@ class Interface(QtWidgets.QWidget):
         ligne_bas= QtWidgets.QHBoxLayout()
         self.label_resultat = QtWidgets.QLabel("Puissance: MW")  #creation widget label pour afficher résulat puissance
         self.button = QtWidgets.QPushButton("Début")
+        self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
         ligne_bas.addWidget(self.label_resultat)
         ligne_bas.addStretch()  #Ajout d'un espace a la ligne (layout)
         ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
         layout_gauche.addLayout(ligne_bas)
 
 
-    #appelée qunad on clicque le bouton
+    #appelée quand on clicque le bouton
     def bouton_click(self):
-        valeur= self.spinbox_Q.value()
-        print(f"Simulation lancée avec un débit de {valeur} m³/s")
-        self.afficher_puissance(valeur)
+        valeur_Q= self.spinbox_Q.value()
+        valeur_h= self.spinbox_h.value()
+        valeur_eta= self.spinbox_eta.value()
+        print(f"Simulation a été lancée avec un  débit de {valeur_Q} m³/s, une hauteur de {valeur_h} m et un randement de {valeur_eta} .")
+        self.afficher_puissance()
 
     def afficher_puissance(self):
         #utilise valeur du slider x
@@ -165,7 +158,7 @@ class Interface(QtWidgets.QWidget):
         eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
 
         P = loi_physique.calculer_puissance(Q,h,eta)
-        self.label_resultat.setText(f"Puissance: {P } MW")  #modifie label resultat en ajoutant valeur puissance
+        self.label_resultat.setText(f"Puissance: {P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
 
 
