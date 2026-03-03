@@ -44,8 +44,10 @@ def run_centrale(rendement, débit, masse_volumique=1000, g=9.81, hauteur=20):
             print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
             powers = []
 
-    if powers.length():
+    if len(powers)<10:
         powers.append(p)# ajouter chaque p calculer en liste
+    else:
+        del powers[len(powers) - 9]
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
