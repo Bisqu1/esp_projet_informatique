@@ -25,8 +25,7 @@ def calculer_puissance(Q ,h ,eta ,rho=1000,g=9.81):
     rho: densité du fluide (kg/m³)
     """
     puissance_W= Q * h * eta * rho * g
-    puissance_MW = puissance_W/1000000
-    return puissance_MW
+    return puissance_W
 
 
 

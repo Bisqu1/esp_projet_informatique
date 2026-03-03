@@ -21,7 +21,7 @@ def run_centrale(rendement, débit, masse_volumique=1000, g=9.81, hauteur=20):
         débit = float(input("Quelle est le débit d'eau: "))
 
     #Calcul
-    p = loi_physique.equation(rendement, masse_volumique, g, débit, hauteur)
+    p = loi_physique.calculer_puissance(rendement, masse_volumique, g, débit, hauteur)
     print(p / 1000, "kW")
 
     if p / 1000 < 72000:
@@ -44,13 +44,14 @@ def run_centrale(rendement, débit, masse_volumique=1000, g=9.81, hauteur=20):
             print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
             powers = []
 
-    powers.append(p)
+    if powers.length():
+        powers.append(p)# ajouter chaque p calculer en liste
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for power_val in powers:
             writer.writerow([power_val])
-
+    return powers
     #Graphique Scatter par run
     x = list(range(1, len(powers) + 1))
 
