@@ -1,7 +1,19 @@
 # INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE
-### Simulation d'une central hydroélectrique
 
-<ins>Librairies:  </ins>
-- pygame
+Simulation d'une centrale hydroélectrique.
+
+## Membres de l'équipe 
+- Mathis Robinet
+- Rayen Rouz
+- Alexis Paiement
+
+## Besoins d'utilisateurs choisis - sprint 1 
+- 10: Appuyer sur des boutons visuels de l’interface avec la souris afin d’accéder à certaines fonctionnalités.
+- 7: Afficher les données voulus (bouton START/STOP) quand je veux sous forme de tableaux ou sous autre format.
+- 3: Avoir un village a la luminosité variable selon la quantité d’énergie produite par la centrale 
+
+
+## Librairies utilisées
+- Pyqt
 - matplotlib
 - numpy
