@@ -5,11 +5,20 @@
 # interactivite
 ##############################################################################################################
 from PySide6 import QtWidgets
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush
+from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap, Qt
 import sys
 import loi_physique
-from visuel import ZoneVisuelle
+import partie_physique
+import numpy
+import matplotlib.pyplot as plt
+import os
+import csv
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import numpy as np
+#from visuel import ZoneVisuelle
 
 #--------AVEC LAYOUT (essaie)---------
 
@@ -26,33 +35,35 @@ class Interface(QtWidgets.QWidget):
 
     #============LAYOUT============
         #-----LAYOUT PRINCIPAL--------
-        layout_principal= QtWidgets.QVBoxLayout(self)  #crée un layout verticale(V) (Q(V/H)Box)
+        self.layout_principal= QtWidgets.QVBoxLayout(self)  #crée un layout verticale(V) (Q(V/H)Box)
 
         #-------ZONE VISUELLE-------
-        zone_visuelle = QtWidgets.QWidget()  #crée zone ou tout le visuelle va être (haut)
-        zone_visuelle.setStyleSheet("background-color: lightblue;")  #mets fond bleu
-        layout_principal.addWidget(zone_visuelle, stretch=7)  #ajoute la zone au layout principal qui prend de 70% de la hauteur du layout principal
+        self.zone_visuelle = QtWidgets.QWidget()  #crée zone ou tout le visuelle va être (haut)
+        self.zone_visuelle.setStyleSheet("background-color: lightblue;")
+        self.layout_visuelle= QtWidgets.QVBoxLayout(self.zone_visuelle)
+        self.layout_principal.addWidget(self.zone_visuelle, stretch=7)  #ajoute la zone au layout principal qui prend de 70% de la hauteur du layout principal
 
         #---------ZONE INTERACTIVE--------
-        zone_interactive= QtWidgets.QWidget()  #crée zone ou tout interactif va etre (bas)
-        layout_interactive= QtWidgets.QHBoxLayout(zone_interactive)  #crée layout horizontal a l'interieur de zone_interactive
-        layout_principal.addWidget(zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
+        self.zone_interactive= QtWidgets.QWidget()  #crée zone ou tout interactif va etre (bas)
+        self.layout_interactive= QtWidgets.QHBoxLayout(self.zone_interactive)  #crée layout horizontal a l'interieur de zone_interactive
+        self.layout_principal.addWidget(self.zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
 
             # -----zone Modif donne(partie gauche de la zone interactive)-----
-        panneau_Igauche = QtWidgets.QWidget()
-        layout_gauche = QtWidgets.QVBoxLayout(panneau_Igauche)  # crée layout vertical pour empiler les lignes
-        layout_interactive.addWidget(panneau_Igauche, stretch=1)  #prend 50% de la zone interactive
+        self.panneau_Igauche = QtWidgets.QWidget()
+        self.layout_gauche = QtWidgets.QVBoxLayout(self.panneau_Igauche)  # crée layout vertical pour empiler les lignes
+        self.layout_interactive.addWidget(self.panneau_Igauche, stretch=1)  #prend 50% de la zone interactive
 
             #-----zone autre chose interactive a ajouter plutard( partie droite de la zone interactive)-------
-        panneau_Idroit = QtWidgets.QWidget()
-        panneau_Idroit.setStyleSheet("background-color: lightgrey;")  #temporaire pour diferencier zone gauche de droite
-        layout_interactive.addWidget(panneau_Idroit, stretch=1)  #prend 50% de la zone interactive
+        self.panneau_Idroit = QtWidgets.QWidget()
+        self.panneau_Idroit.setStyleSheet("background-color: lightgrey;")  #temporaire pour differencier zone gauche de droite
+        self.layout_droite = QtWidgets.QVBoxLayout(self.panneau_Idroit)
+        self.layout_interactive.addWidget(self.panneau_Idroit, stretch=1)  #prend 50% de la zone interactive
 
     #==========WIDGETS==========
 
 
         #----DÉBIT (Q)-----
-        ligne_Q= QtWidgets.QHBoxLayout()  #crée layout horizontal qui va contenir toutes interactions avec  débit
+        self.ligne_Q= QtWidgets.QHBoxLayout()  #crée layout horizontal qui va contenir toutes interactions avec  débit
 
         self.label_Q =QtWidgets.QLabel("débit (Q):")  #creation widget label
 
@@ -68,13 +79,13 @@ class Interface(QtWidgets.QWidget):
         self.spinbox_Q.setSingleStep(5)  #Bond
 
         #ajoute les 3 widgets sur la ligne de gauche a droit
-        ligne_Q.addWidget(self.label_Q)
-        ligne_Q.addWidget(self.slider_Q)
-        ligne_Q.addWidget(self.spinbox_Q)
-        layout_gauche.addLayout(ligne_Q)  #ajoute ligne compltète(Q) a la zone au layout interactive
+        self.ligne_Q.addWidget(self.label_Q)
+        self.ligne_Q.addWidget(self.slider_Q)
+        self.ligne_Q.addWidget(self.spinbox_Q)
+        self.layout_gauche.addLayout(self.ligne_Q)  #ajoute ligne compltète(Q) a la zone au layout interactive
 
         #----HAUTEUR (h)----------
-        ligne_h= QtWidgets.QHBoxLayout()
+        self.ligne_h= QtWidgets.QHBoxLayout()
 
         self.label_h = QtWidgets.QLabel("hauteur (h):")
 
@@ -87,13 +98,13 @@ class Interface(QtWidgets.QWidget):
         self.spinbox_h.setValue(50)
         self.spinbox_h.setSuffix(" m")
 
-        ligne_h.addWidget(self.label_h)
-        ligne_h.addWidget(self.slider_h)
-        ligne_h.addWidget(self.spinbox_h)
-        layout_gauche.addLayout(ligne_h)
+        self.ligne_h.addWidget(self.label_h)
+        self.ligne_h.addWidget(self.slider_h)
+        self.ligne_h.addWidget(self.spinbox_h)
+        self.layout_gauche.addLayout(self.ligne_h)
 
         #-----RENDEMENT (eta)----
-        ligne_eta= QtWidgets.QHBoxLayout()
+        self.ligne_eta= QtWidgets.QHBoxLayout()
 
         self.label_eta= QtWidgets.QLabel("Rendement (η):")
 
@@ -106,10 +117,10 @@ class Interface(QtWidgets.QWidget):
         self.spinbox_eta.setValue(0.90)
         self.spinbox_eta.setSingleStep(0.01)
 
-        ligne_eta.addWidget(self.label_eta)
-        ligne_eta.addWidget(self.slider_eta)
-        ligne_eta.addWidget(self.spinbox_eta)
-        layout_gauche.addLayout(ligne_eta)
+        self.ligne_eta.addWidget(self.label_eta)
+        self.ligne_eta.addWidget(self.slider_eta)
+        self.ligne_eta.addWidget(self.spinbox_eta)
+        self.layout_gauche.addLayout(self.ligne_eta)
 
     #===============CONNEXION================
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
@@ -133,23 +144,28 @@ class Interface(QtWidgets.QWidget):
         self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
     # ==============LABEL RESULTAT=================
-        ligne_bas= QtWidgets.QHBoxLayout()
+        self.ligne_bas= QtWidgets.QHBoxLayout()
         self.label_resultat = QtWidgets.QLabel("Puissance: MW")  #creation widget label pour afficher résulat puissance
         self.button = QtWidgets.QPushButton("Début")
         self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
-        ligne_bas.addWidget(self.label_resultat)
-        ligne_bas.addStretch()  #Ajout d'un espace a la ligne (layout)
-        ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
-        layout_gauche.addLayout(ligne_bas)
+        self.ligne_bas.addWidget(self.label_resultat)
+        self.ligne_bas.addStretch()  #Ajout d'un espace a la ligne (layout)
+        self.ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
+        self.layout_gauche.addLayout(self.ligne_bas)
 
 
     #appelée quand on clicque le bouton
     def bouton_click(self):
-        valeur_Q= self.spinbox_Q.value()
-        valeur_h= self.spinbox_h.value()
-        valeur_eta= self.spinbox_eta.value()
-        print(f"Simulation a été lancée avec un  débit de {valeur_Q} m³/s, une hauteur de {valeur_h} m et un randement de {valeur_eta} .")
+        Q= self.spinbox_Q.value()
+        h= self.spinbox_h.value()
+        eta= self.spinbox_eta.value()
+        print(f"Simulation a été lancée avec un  débit de {Q} m³/s, une hauteur de {h} m et un randement de {eta} .")
         self.afficher_puissance()
+        self.figure = partie_physique.run_centrale(Q, h, eta)
+        self.canvas = FigureCanvas(self.figure)
+        self.layout_droite.addWidget(self.canvas)
+
+
 
     def afficher_puissance(self):
         #utilise valeur du slider x
@@ -159,6 +175,20 @@ class Interface(QtWidgets.QWidget):
 
         P = loi_physique.calculer_puissance(Q,h,eta)
         self.label_resultat.setText(f"Puissance: {P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
+
+    #def afficher_graphique(self):
+    #    Q = self.slider_Q.value()
+    #    h = self.slider_h.value()
+    #    eta = self.slider_eta.value() / 100  # divise par 100 pour reconvertir en decimal
+    #    partie_physique.run_centrale(Q,h,eta)
+
+    def afficher_image(self):
+        self.image_label = QLabel(self)
+        pixmap= QPixmap("esp_projet_informatique/images-barrage.jpg")
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setScaledContents(True)
+        self.image_label.setAlignment(Qt.AlignCenter)
+        self.setCentralWidget(self.image_label)
 
 
 
