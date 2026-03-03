@@ -39,13 +39,10 @@ else:
     print("Il y a",p/1000-72000,"kW en surplus")
 
 # Graphique des valeurs de puissance par run
-import os
-import csv
-import matplotlib.pyplot as plt
 
 filename = "scatter_power.csv"
 
-# --- Lecture des données existantes ---
+# Lecture des données existantes
 powers = []
 
 if os.path.exists(filename):
@@ -59,23 +56,23 @@ if os.path.exists(filename):
         print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
         powers = []
 
-# --- Ajout de la nouvelle puissance (variable non écrasée) ---
+#Ajout de la nouvelle puissance (variable non écrasée)
 powers.append(p)  # 'p' reste intact, pas de boucle qui l'écrase
 
-# --- Sauvegarde dans le CSV ---
+#Sauvegarde dans le CSV
 with open(filename, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    for power_val in powers:          # ✅ variable renommée pour ne pas écraser p
+    for power_val in powers:          #  variable renommée pour ne pas écraser p
         writer.writerow([power_val])
 
-# --- Axes automatiques ---
+#Axes automatiques
 x = list(range(1, len(powers) + 1))  # 1, 2, 3, ... numéro de run
 
-# --- Affichage scatter ---
+#Affichage scatter
 plt.figure(figsize=(8, 5))
-plt.scatter(x, [p / 1000 for p in powers], color='steelblue', zorder=3)  # ✅ W → kW
+plt.scatter(x, [p / 1000 for p in powers], color='steelblue', zorder=3)  #  W → kW
 plt.xlabel("Numéro de run")
-plt.ylabel("Puissance (kW)")                                               # ✅ label mis à jour
+plt.ylabel("Puissance (kW)")                                               #  label mis à jour
 plt.title("Puissance par run")
 plt.xticks(x)
 plt.grid(True, linestyle='--', alpha=0.6)
