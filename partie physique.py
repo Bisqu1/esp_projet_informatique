@@ -38,34 +38,46 @@ if p/1000 < 72000:
 else:
     print("Il y a",p/1000-72000,"kW en surplus")
 
-#Graphique des valeurs de p (Chat GPT)
+# Graphique des valeurs de puissance par run
+import os
+import csv
+import matplotlib.pyplot as plt
+
 filename = "scatter_power.csv"
 
 # --- Lecture des données existantes ---
 powers = []
 
 if os.path.exists(filename):
-    with open(filename, newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            powers.append(float(row[0]))  # on stocke juste P
-# Sinon, liste vide si premier run
-# Ajoute la nouvelle puissance
-powers.append(p)
+    try:
+        with open(filename, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if row:  # ignore les lignes vides
+                    powers.append(float(row[0]))
+    except (ValueError, IOError) as e:
+        print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
+        powers = []
 
-# --- Sauvegarde toutes les données dans le CSV ---
+# --- Ajout de la nouvelle puissance (variable non écrasée) ---
+powers.append(p)  # 'p' reste intact, pas de boucle qui l'écrase
+
+# --- Sauvegarde dans le CSV ---
 with open(filename, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    for p in powers:
-        writer.writerow([p])
+    for power_val in powers:          # ✅ variable renommée pour ne pas écraser p
+        writer.writerow([power_val])
 
-# --- Préparer les X automatiquement ---
-x = list(range(1, len(powers)+1))  # 1,2,3,... numéro du run automatique
+# --- Axes automatiques ---
+x = list(range(1, len(powers) + 1))  # 1, 2, 3, ... numéro de run
 
 # --- Affichage scatter ---
-plt.scatter(x, powers)
+plt.figure(figsize=(8, 5))
+plt.scatter(x, [p / 1000 for p in powers], color='steelblue', zorder=3)  # ✅ W → kW
 plt.xlabel("Numéro de run")
-plt.ylabel("Puissance (W)")
+plt.ylabel("Puissance (kW)")                                               # ✅ label mis à jour
 plt.title("Puissance par run")
-plt.grid(True)
+plt.xticks(x)
+plt.grid(True, linestyle='--', alpha=0.6)
+plt.tight_layout()
 plt.show()
