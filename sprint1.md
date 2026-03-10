@@ -22,7 +22,8 @@ Simulation d'une centrale hydroélectrique.
 
 ## Fichier à run
 ```bash
-interactivite.py
+python interactivite.py
 ```
+
 
 
