@@ -9,16 +9,12 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush
 import sys
 import loi_physique
+import partie_physique
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+
 #from visuel import ZoneVisuelle
-from PySide6.QtWidgets import (
-    QVBoxLayout,
-    QHBoxLayout,
-    QWidget,
-    QLabel,
-    QSlider,
-    QDoubleSpinBox,
-    QPushButton
-)
+
 #--------AVEC LAYOUT (essaie)---------
 
 class Interface(QtWidgets.QWidget):
@@ -56,10 +52,17 @@ class Interface(QtWidgets.QWidget):
         layout_gauche = QtWidgets.QVBoxLayout(panneau_Igauche)  # crée layout vertical pour empiler les lignes
         layout_interactive.addWidget(panneau_Igauche, stretch=1)  #prend 50% de la zone interactive
 
+
+
             #-----zone autre chose interactive a ajouter plutard( partie droite de la zone interactive)-------
         panneau_Idroit = QtWidgets.QWidget()
-        panneau_Idroit.setStyleSheet("background-color: lightgrey;")  #temporaire pour diferencier zone gauche de droite
+        #panneau_Idroit.setStyleSheet("background-color: black;")  #temporaire pour differencier zone gauche de droite
         layout_interactive.addWidget(panneau_Idroit, stretch=1)  #prend 50% de la zone interactive
+
+        layout_droit = QtWidgets.QVBoxLayout(panneau_Idroit)
+        self.fig, self.ax = plt.subplots()
+        self.canvas = FigureCanvas(self.fig)
+        layout_droit.addWidget(self.canvas)
 
     #==========WIDGETS==========
 
@@ -111,11 +114,11 @@ class Interface(QtWidgets.QWidget):
         self.label_eta= QtWidgets.QLabel("Rendement (η):")
 
         self.slider_eta = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_eta.setRange(0,100)
+        self.slider_eta.setRange(60,90)
         self.slider_eta.setValue(90)
 
         self.spinbox_eta= QtWidgets.QDoubleSpinBox()
-        self.spinbox_eta.setRange(0.0,1.0)
+        self.spinbox_eta.setRange(0.6,0.9)
         self.spinbox_eta.setValue(0.90)
         self.spinbox_eta.setSingleStep(0.01)
 
@@ -155,6 +158,17 @@ class Interface(QtWidgets.QWidget):
         ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
         layout_gauche.addLayout(ligne_bas)
 
+    def afficher_graphique(self, powers):
+        x = list(range(1, len(powers) + 1))
+        self.ax.clear()
+        self.ax.scatter(x, [val / 1000 for val in powers], color='steelblue', zorder=3)
+        self.ax.set_xlabel("Numéro de run")
+        self.ax.set_ylabel("Puissance (kW)")
+        self.ax.set_title("Puissance par run")
+        self.ax.set_xticks(x)
+        self.ax.grid(True, linestyle='--', alpha=0.6)
+        self.fig.tight_layout()
+        self.canvas.draw()  # rafraîchit le canvas Qt
 
 
 
@@ -175,11 +189,12 @@ class Interface(QtWidgets.QWidget):
 
         #appelée quand on clicque le bouton
     def bouton_click(self):
-        valeur_Q= self.spinbox_Q.value()
-        valeur_h= self.spinbox_h.value()
-        valeur_eta= self.spinbox_eta.value()
-        print(f"Simulation a été lancée avec un  débit de {valeur_Q} m³/s, une hauteur de {valeur_h} m et un randement de {valeur_eta} .")
-        self.afficher_puissance()
+        rendement = self.spinbox_eta.value()
+        débit = self.spinbox_Q.value()
+        hauteur = self.spinbox_h.value()
+
+        powers = partie_physique.run_centrale(rendement, débit, h=hauteur)  # appel externe
+        self.afficher_graphique(powers)
 
     def afficher_puissance(self):
         #utilise valeur du slider x
@@ -260,12 +275,12 @@ if __name__ == "__main__":
 #
 #        self.slider_eta = QtWidgets.QSlider(Qt.Horizontal,self)
 #        self.slider_eta.setGeometry(140,680,300,30)
-#        self.slider_eta.setRange(0,100)
+#        self.slider_eta.setRange(60,90)
 #        self.slider_eta.setValue(90)
 #
 #        self.spinbox_eta= QtWidgets.QDoubleSpinBox(self)
 #        self.spinbox_eta.setGeometry(460,680,120,30)
-#        self.spinbox_eta.setRange(0.0,1.0)
+#        self.spinbox_eta.setRange(0.6,0.9)
 #        self.spinbox_eta.setValue(0.90)
 #        self.spinbox_eta.setSingleStep(0.01)
 #
