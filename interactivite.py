@@ -9,6 +9,9 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap, Qt
 import sys
+
+from matplotlib.ticker import AutoMinorLocator
+
 import loi_physique
 import partie_physique
 import numpy
@@ -166,38 +169,41 @@ class Interface(QtWidgets.QWidget):
 
     #appelée quand on clicque le bouton
     def bouton_click(self):
-        Q= self.spinbox_Q.value()
-        h= self.spinbox_h.value()
-        eta= self.spinbox_eta.value()
-        print(f"Simulation a été lancée avec un  débit de {Q} m³/s, une hauteur de {h} m et un randement de {eta} .")
+        print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un randement de {self.eta} .")
         self.afficher_puissance()
 
-        powers = partie_physique.run_centrale(eta,Q,h)
+
+        powers = partie_physique.run_centrale(self.eta,self.Q,self.h)
+        #print(powers)
         self.afficher_graphique(powers)
         #self.figure = partie_physique.run_centrale(Q, h, eta)
         #self.canvas = FigureCanvas(self.figure)
         #self.layout_droite.addWidget(self.canvas)
-
+        #print(self.y)
 
 
     def afficher_puissance(self):
         #utilise valeur du slider x
-        Q= self.slider_Q.value()
-        h= self.slider_h.value()
-        eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
+        self.Q= self.slider_Q.value()
+        self.h= self.slider_h.value()
+        self.eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
 
-        P = loi_physique.calculer_puissance(Q,h,eta)
-        self.label_resultat.setText(f"Puissance: {P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
+        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000
+        self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
     def afficher_graphique(self,powers):
         x = list(range(1, len(powers) + 1))
         self.ax.clear()
-        self.ax.scatter(x, [val / 1000 for val in powers], color='steelblue', zorder=3)
+        self.ax.scatter(x, [val for val in powers],s=10,color='steelblue', zorder=3)
         self.ax.set_xlabel("Numéro de run")
-        self.ax.set_ylabel("Puissance (kW)")
+        self.ax.set_ylabel("Puissance (MW)")
         self.ax.set_title("Puissance par run")
+        self.ax.minorticks_on()
         self.ax.set_xticks(x)
-        self.ax.grid(True, linestyle='--', alpha=0.6)
+        self.y = np.arange(0,max(powers), 200)
+        self.ax.set_yticks(self.y)
+        #self.xaxis.set_minor_locator(AutoMinorLocator())
+        self.ax.grid( color="grey", linestyle="-", linewidth=.5, alpha=0.6)
         self.fig.tight_layout()
         self.canvas.draw()  # rafraîchit le canvas Qt
 

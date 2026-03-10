@@ -12,7 +12,9 @@ from matplotlib.backends.backend_template import FigureCanvas
 import loi_physique
 import os
 
-def run_centrale(rendement, debit, masse_volumique=1000, g=9.81, hauteur=20):
+
+
+def run_centrale(debit, hauteur, rendement, masse_volumique=1000, g=9.81):
     #rendement = float(input("Quelle est le rendement de la centrale: "))
     #while not (0.6 <= rendement <= 0.9):
     #    print("Le rendement de la centrale doit être compris entre 0.6 et 0.9")
@@ -24,7 +26,7 @@ def run_centrale(rendement, debit, masse_volumique=1000, g=9.81, hauteur=20):
     #    debit = float(input("Quelle est le débit d'eau: "))
 #
     ##Calcul
-    p = loi_physique.calculer_puissance(rendement, masse_volumique, g, debit, hauteur)
+    p = loi_physique.calculer_puissance(rendement, masse_volumique, g, debit, hauteur)/1_000_000
     #print(p / 1000, "kW")
 
     #if p / 1000 < 72000:
@@ -47,7 +49,9 @@ def run_centrale(rendement, debit, masse_volumique=1000, g=9.81, hauteur=20):
             print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
             powers = []
 
-    powers.append(p)
+    if len(powers) >= 10:
+        del powers[0]  # supprime la plus vieille valeur
+    powers.append(p)  # ajoute toujours le nouveau p
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -56,19 +60,7 @@ def run_centrale(rendement, debit, masse_volumique=1000, g=9.81, hauteur=20):
 
     #Graphique Scatter par run
 
-
-    x = list(range(1, len(powers) + 1))
-
-
-    plt.figure(figsize=(8, 5))
-    plt.scatter(x, [val/1000000 for val in powers], color='steelblue', zorder=3)
-    plt.xlabel("Numéro de run")
-    plt.ylabel("Puissance (kW)")
-    plt.title("Puissance par run")
-    plt.xticks(x)
-    plt.grid(True, linestyle='--', alpha=0.6)
-    plt.tight_layout()
-    plt.show()
+    return powers
 
 
 #Appel test du def
