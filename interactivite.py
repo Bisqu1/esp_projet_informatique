@@ -111,11 +111,11 @@ class Interface(QtWidgets.QWidget):
         self.label_eta= QtWidgets.QLabel("Rendement (η):")
 
         self.slider_eta = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_eta.setRange(0,100)
+        self.slider_eta.setRange(60,90)
         self.slider_eta.setValue(90)
 
         self.spinbox_eta= QtWidgets.QDoubleSpinBox()
-        self.spinbox_eta.setRange(0.0,1.0)
+        self.spinbox_eta.setRange(0.6,0.9)
         self.spinbox_eta.setValue(0.90)
         self.spinbox_eta.setSingleStep(0.01)
 
@@ -173,7 +173,7 @@ class Interface(QtWidgets.QWidget):
         débit = self.spinbox_Q.value()
         hauteur = self.spinbox_h.value()
 
-        powers = partie_physique.run_centrale(rendement, débit, hauteur=hauteur)  # appel externe
+        powers = partie_physique.run_centrale(rendement, débit, h=hauteur)  # appel externe
         self.afficher_graphique(powers)
 
     def afficher_puissance(self):
