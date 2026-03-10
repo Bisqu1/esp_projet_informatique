@@ -20,7 +20,11 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 class Interface(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+
         self.initUI()
+
+        #appele fonction image
+        self.create_image("barrage.png")
 
     def initUI(self):
 
@@ -30,19 +34,18 @@ class Interface(QtWidgets.QWidget):
 
     #============LAYOUT============
         #-----LAYOUT PRINCIPAL--------
-        layout_principal= QtWidgets.QVBoxLayout(self)  #crée un layout verticale(V) (Q(V/H)Box)
+        self.layout_principal= QtWidgets.QVBoxLayout(self)  #crée un layout verticale(V) (Q(V/H)Box)
+
 
         #-------ZONE VISUELLE-------
-        zone_visuelle = QtWidgets.QWidget()  #crée zone ou tout le visuelle va être (haut)
-        zone_visuelle.setStyleSheet("background-color: lightblue;")  #mets fond bleu
-        layout_principal.addWidget(zone_visuelle, stretch=7)  #ajoute la zone au layout principal qui prend de 70% de la hauteur du layout principal
-
-
-
+        self.zone_visuelle = QtWidgets.QWidget()  #crée zone ou tout le visuelle va être (haut)
+        self.zone_visuelle.setStyleSheet("background-color: lightblue;")  #mets fond bleu
+        self.layout_principal.addWidget(self.zone_visuelle, stretch=7)  #ajoute la zone au layout principal qui prend de 70% de la hauteur du layout principal
+        self.layout_visuelle = QtWidgets.QHBoxLayout(self.zone_visuelle)
         #---------ZONE INTERACTIVE--------
         zone_interactive= QtWidgets.QWidget()  #crée zone ou tout interactif va etre (bas)
         layout_interactive= QtWidgets.QHBoxLayout(zone_interactive)  #crée layout horizontal a l'interieur de zone_interactive
-        layout_principal.addWidget(zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
+        self.layout_principal.addWidget(zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
 
             # -----zone Modif donne(partie gauche de la zone interactive)-----
         panneau_Igauche = QtWidgets.QWidget()
@@ -167,7 +170,24 @@ class Interface(QtWidgets.QWidget):
         self.fig.tight_layout()
         self.canvas.draw()  # rafraîchit le canvas Qt
 
-    #appelée quand on clicque le bouton
+
+
+    # =============IMAGE========================
+    def create_image(self,image_path):
+
+        self.image_label = QLabel(self)
+        self.layout_visuelle.addWidget(self.image_label)
+        pixmap = QPixmap(image_path)
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setScaledContents(True)
+
+        if pixmap.isNull():
+            self.image_label.setText("Image not found or could not be loaded.")
+            return
+
+    #"esp_projet_informatique/barrage.png"
+
+        #appelée quand on clicque le bouton
     def bouton_click(self):
         rendement = self.spinbox_eta.value()
         débit = self.spinbox_Q.value()
@@ -193,6 +213,7 @@ if __name__ == "__main__":
     widget = Interface()
     widget.show()
     sys.exit(app.exec())
+
 
 
 
