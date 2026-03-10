@@ -18,5 +18,10 @@ Simulation d'une centrale hydroélectrique.
 - Pyqt
 - matplotlib
 - numpy
+
 ## Fichier à run
-- interactivite.py
+```bash
+interactivite.py
+```
+
+
