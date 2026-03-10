@@ -254,12 +254,12 @@ if __name__ == "__main__":
 #
 #        self.slider_eta = QtWidgets.QSlider(Qt.Horizontal,self)
 #        self.slider_eta.setGeometry(140,680,300,30)
-#        self.slider_eta.setRange(0,100)
+#        self.slider_eta.setRange(60,90)
 #        self.slider_eta.setValue(90)
 #
 #        self.spinbox_eta= QtWidgets.QDoubleSpinBox(self)
 #        self.spinbox_eta.setGeometry(460,680,120,30)
-#        self.spinbox_eta.setRange(0.0,1.0)
+#        self.spinbox_eta.setRange(0.6,0.9)
 #        self.spinbox_eta.setValue(0.90)
 #        self.spinbox_eta.setSingleStep(0.01)
 #
