@@ -8,9 +8,10 @@ Simulation d'une centrale hydroélectrique.
 - Alexis Paiement
 
 ## Besoins d'utilisateurs choisis - sprint 1 
-- 10: Appuyer sur des boutons visuels de l’interface avec la souris afin d’accéder à certaines fonctionnalités.
+- 2: Sauvegarder en formats PNG le graphique fais avec matplotlib et l’afficher sur une zone de l’écran dédié à l’aide de PyGame
 - 7: Afficher les données voulus (bouton START/STOP) quand je veux sous forme de tableaux ou sous autre format.
-- 3: Avoir un village a la luminosité variable selon la quantité d’énergie produite par la centrale 
+- 1: Pouvoir modifier certaines variables de l’équation (i) sur la fenêtre en utilisant la librairie PyGame. 
+
 
 
 ## Librairies utilisées
