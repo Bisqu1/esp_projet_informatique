@@ -17,7 +17,6 @@ Simulation d'une centrale hydroélectrique.
 ## Librairies utilisées
 - Pyqt
 - matplotlib
-- numpy
 
 ## Fichier à run
 ```bash
