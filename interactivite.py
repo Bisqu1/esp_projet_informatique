@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush
 import sys
 import loi_physique
-from visuel import ZoneVisuelle
+
 
 #--------AVEC LAYOUT (essaie)---------
 
