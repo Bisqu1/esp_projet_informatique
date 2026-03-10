@@ -5,6 +5,7 @@
 # interactivite
 ##############################################################################################################
 from PySide6 import QtWidgets
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush
 import sys
@@ -24,7 +25,7 @@ class Interface(QtWidgets.QWidget):
         self.initUI()
 
         #appele fonction image
-        self.create_image("barrage.png")
+        self.create_image("barrage_image_lumiere10.png")
 
     def initUI(self):
 
