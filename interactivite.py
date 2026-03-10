@@ -26,7 +26,7 @@ class Interface(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-
+        self.affichage_image("Barrage_Manic5.png")
     def initUI(self):
 
     #=============FENÊTRE ===========
@@ -58,6 +58,9 @@ class Interface(QtWidgets.QWidget):
         self.panneau_Idroit.setStyleSheet("background-color: lightgrey;")  #temporaire pour differencier zone gauche de droite
         self.layout_droite = QtWidgets.QVBoxLayout(self.panneau_Idroit)
         self.layout_interactive.addWidget(self.panneau_Idroit, stretch=1)  #prend 50% de la zone interactive
+        self.fig,self.ax = plt.subplots()
+        self.canvas = FigureCanvas(self.fig)
+        self.layout_droite.addWidget(self.canvas)
 
     #==========WIDGETS==========
 
@@ -153,6 +156,13 @@ class Interface(QtWidgets.QWidget):
         self.ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
         self.layout_gauche.addLayout(self.ligne_bas)
 
+    # ========== AFFICHAGE IMAGE ==========
+    def affichage_image(self,image_path):
+        self.image_label = QLabel(self)
+        self.layout_visuelle.addWidget(self.image_label)
+        pixmap = QPixmap(image_path)
+        self.image_label.setPixmap(pixmap)
+        self.image_label.setScaledContents(True)
 
     #appelée quand on clicque le bouton
     def bouton_click(self):
@@ -161,9 +171,12 @@ class Interface(QtWidgets.QWidget):
         eta= self.spinbox_eta.value()
         print(f"Simulation a été lancée avec un  débit de {Q} m³/s, une hauteur de {h} m et un randement de {eta} .")
         self.afficher_puissance()
-        self.figure = partie_physique.run_centrale(Q, h, eta)
-        self.canvas = FigureCanvas(self.figure)
-        self.layout_droite.addWidget(self.canvas)
+
+        powers = partie_physique.run_centrale(eta,Q,h)
+        self.afficher_graphique(powers)
+        #self.figure = partie_physique.run_centrale(Q, h, eta)
+        #self.canvas = FigureCanvas(self.figure)
+        #self.layout_droite.addWidget(self.canvas)
 
 
 
@@ -176,19 +189,30 @@ class Interface(QtWidgets.QWidget):
         P = loi_physique.calculer_puissance(Q,h,eta)
         self.label_resultat.setText(f"Puissance: {P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
-    #def afficher_graphique(self):
-    #    Q = self.slider_Q.value()
-    #    h = self.slider_h.value()
-    #    eta = self.slider_eta.value() / 100  # divise par 100 pour reconvertir en decimal
-    #    partie_physique.run_centrale(Q,h,eta)
+    def afficher_graphique(self,powers):
+        x = list(range(1, len(powers) + 1))
+        self.ax.clear()
+        self.ax.scatter(x, [val / 1000 for val in powers], color='steelblue', zorder=3)
+        self.ax.set_xlabel("Numéro de run")
+        self.ax.set_ylabel("Puissance (kW)")
+        self.ax.set_title("Puissance par run")
+        self.ax.set_xticks(x)
+        self.ax.grid(True, linestyle='--', alpha=0.6)
+        self.fig.tight_layout()
+        self.canvas.draw()  # rafraîchit le canvas Qt
 
-    def afficher_image(self):
-        self.image_label = QLabel(self)
-        pixmap= QPixmap("esp_projet_informatique/images-barrage.jpg")
-        self.image_label.setPixmap(pixmap)
-        self.image_label.setScaledContents(True)
-        self.image_label.setAlignment(Qt.AlignCenter)
-        self.setCentralWidget(self.image_label)
+        #Q = self.slider_Q.value()
+        #h = self.slider_h.value()
+        #eta = self.slider_eta.value() / 100  # divise par 100 pour reconvertir en decimal
+        #partie_physique.run_centrale(Q,h,eta)
+
+    #def afficher_image(self):
+        #self.image_label = QLabel(self)
+        #pixmap= QPixmap("esp_projet_informatique/images-barrage.jpg")
+        #self.image_label.setPixmap(pixmap)
+        #self.image_label.setScaledContents(True)
+        #self.image_label.setAlignment(Qt.AlignCenter)
+        #self.setCentralWidget(self.image_label)
 
 
 
@@ -322,3 +346,4 @@ if __name__ == "__main__":
 #    widget = Interface()
 #    widget.show()
 #    sys.exit(app.exec())
+#
