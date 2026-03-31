@@ -8,9 +8,10 @@ Simulation d'une centrale hydroélectrique.
 - Alexis Paiement
 
 ## Besoins d'utilisateurs choisis - sprint 1 
-- 2: Sauvegarder en formats PNG le graphique fais avec matplotlib et l’afficher sur une zone de l’écran dédié à l’aide de PyGame
+- 2: Sauvegarder le graphique fais avec matplotlib et l’afficher sur une zone de l’écran dédié à l’aide de Pyqt
 - 7: Afficher les données voulus (bouton START/STOP) quand je veux sous forme de tableaux ou sous autre format.
-- 1: Pouvoir modifier certaines variables de l’équation (i) sur la fenêtre en utilisant la librairie PyGame. 
+- 1: Pouvoir modifier certaines variables de l’équation (i) sur la fenêtre en utilisant la librairie Pyqt. (𝑷=𝜼⋅𝝆⋅𝒈⋅𝑸⋅𝑯 (𝒊) )
+
 
 
 
@@ -18,3 +19,13 @@ Simulation d'une centrale hydroélectrique.
 - Pyqt
 - matplotlib
 - numpy
+
+## Fichier à run
+```bash
+python interactivite.py
+```
+
+## Site
+https://archambaultv-prof.github.io/2026H-420-ESP-MA/
+
+
