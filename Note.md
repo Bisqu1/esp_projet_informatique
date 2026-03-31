@@ -1,9 +1,16 @@
 ## En cours
-
+    none
 
 ## À faire
-- implémentation perte d'énergie (loi de Joule, loi résistivité pour trouver resistance)
-- implémentation consommation différente selon période journée 
+- #### PRIORITÉ
+    - implémentation perte d'énergie (loi de Joule, loi résistivité pour trouver resistance)
+    - évaluation +++ (mettre limite a atteindre pour alimentation village)
+    - implémentation consommation différente selon période journée ( limite change)
+    
+- #### OPTIONNEL
+    - fonctionnalité zoom/dézoom graphique en double cliquant sur graphique ou sur autre bouton
+    - fonctionnalité remplacer graphique par tableau en appuyant sur autre bouton
+    - differente image pour different moment journée
 
 ## Note
 - Équation
@@ -12,6 +19,7 @@
       - L: Longueur du cable (m)
       - A: Aire du cable(m²)
       - ρ: Resistivité du materiau du cable (Ω*m)
+  
     - P = ρ * η * Q * g * h
       - P: Puissance produit par le barrage hydroléletrique (W)
       - ρ: Masse volumique de l'eau (kg/m³)
@@ -19,10 +27,12 @@
       - Q: Débit de l,eau (m³/s)
       - g: Constante gravitationnelle terrestre (m/s²)
       - h: Hauteur de la chute (m)
+  
     - P = U²/R
       - P: Énergie perdu (W)
       - I: Voltage traversant le cable (V)
       - R: Résistance du cable (Ω)
+
 - Données
   - ρ(masse volumique de l'eau) = 1000 kg/m³
   - g = 9,81 m/s²
