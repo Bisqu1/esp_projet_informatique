@@ -2,44 +2,39 @@
 # Crée par Mathis Robinet, Rayen Rouz, Alexis Paiement
 # Crée le 2026-02-17
 # 420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
-# interactivite.py
+# interactivite
 ##############################################################################################################
-from PySide6 import QtWidgets, QtGui
+from PySide6 import QtWidgets
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap
-
+from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap, Qt
+import sys
+from partie_physique import Graphique
 from matplotlib.ticker import AutoMinorLocator
+import loi_physique
+import partie_physique
+import numpy
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
 import os
 import csv
-import sys
-
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 import numpy as np
+#from visuel import ZoneVisuelle
 
-import loi_physique
-from partie_physique import AnalyseDonnees
-
+#--------AVEC LAYOUT ---------
 
 class Interface(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.analyse = AnalyseDonnees()  # créer obj
         self.initUI()
-
-
-        #apelle fonction pour afficher image
-        self.create_image("image/copiebarragetest6.png")
-        #bonne image copiebarragetest6.png dimension 1200, 570 ou multiple
+        self.affichage_image("image/imagebarragetest1.png")
     def initUI(self):
 
     #=============FENÊTRE ===========
         self.setWindowTitle('Simulation Central Hydroélectrique')  #titre
         self.setGeometry(100, 100, 1200, 800)  #position,dimension fenêtre
-        #1200,570
+
     #============LAYOUT============
         #-----LAYOUT PRINCIPAL--------
         self.layout_principal= QtWidgets.QVBoxLayout(self)  #crée un layout verticale(V) (Q(V/H)Box)
@@ -55,7 +50,7 @@ class Interface(QtWidgets.QWidget):
         self.layout_interactive= QtWidgets.QHBoxLayout(self.zone_interactive)  #crée layout horizontal a l'interieur de zone_interactive
         self.layout_principal.addWidget(self.zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
 
-            # -----zone Modif données(partie gauche de la zone interactive)-----
+            # -----zone Modif donne(partie gauche de la zone interactive)-----
         self.panneau_Igauche = QtWidgets.QWidget()
         self.layout_gauche = QtWidgets.QVBoxLayout(self.panneau_Igauche)  # crée layout vertical pour empiler les lignes
         self.layout_interactive.addWidget(self.panneau_Igauche, stretch=1)  #prend 50% de la zone interactive
@@ -63,10 +58,13 @@ class Interface(QtWidgets.QWidget):
             #-----zone autre chose interactive a ajouter plutard( partie droite de la zone interactive)-------
         self.panneau_Idroit = QtWidgets.QWidget()
         self.panneau_Idroit.setStyleSheet("background-color: lightgrey;")  #temporaire pour differencier zone gauche de droite
+        self.graphique = Graphique()
         self.layout_droite = QtWidgets.QVBoxLayout(self.panneau_Idroit)
         self.layout_interactive.addWidget(self.panneau_Idroit, stretch=1)  #prend 50% de la zone interactive
-
-        self.layout_droite.addWidget(self.analyse)
+        #self.fig,self.ax = plt.subplots()
+        #self.canvas = FigureCanvas(self.fig)
+        #self.layout_droite.addWidget(self.canvas)
+        self.layout_droite.addWidget(self.graphique)
 
 
     #==========WIDGETS==========
@@ -119,11 +117,11 @@ class Interface(QtWidgets.QWidget):
         self.label_eta= QtWidgets.QLabel("Rendement (η):")
 
         self.slider_eta = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_eta.setRange(60,90)
+        self.slider_eta.setRange(0,100)
         self.slider_eta.setValue(90)
 
         self.spinbox_eta= QtWidgets.QDoubleSpinBox()
-        self.spinbox_eta.setRange(0.6,0.9)
+        self.spinbox_eta.setRange(0.0,1.0)
         self.spinbox_eta.setValue(0.90)
         self.spinbox_eta.setSingleStep(0.01)
 
@@ -154,90 +152,61 @@ class Interface(QtWidgets.QWidget):
         self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
     # ==============LABEL RESULTAT=================
-        self.ligne_resultat= QtWidgets.QHBoxLayout()
+        self.ligne_bas= QtWidgets.QHBoxLayout()
         self.label_resultat = QtWidgets.QLabel("Puissance: MW")  #creation widget label pour afficher résulat puissance
         self.button = QtWidgets.QPushButton("Début")
         self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
-        self.ligne_resultat.addWidget(self.label_resultat)
-        self.ligne_resultat.addStretch()  #Ajout d'un espace a la ligne (layout)
-        self.ligne_resultat.addWidget(self.button)  #pour que le bouton soit a droite
-        self.layout_gauche.addLayout(self.ligne_resultat)
-        self.ligne_evaluation = QtWidgets.QHBoxLayout()
-        self.layout_gauche.addLayout(self.ligne_evaluation)
-        self.label_evaluation = QtWidgets.QLabel()
-        self.ligne_evaluation.addWidget(self.label_evaluation)
-
-
-    #====appelée quand on clicque le bouton=====
-    def bouton_click(self):
-        self.afficher_puissance()
-        print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P: .2f} MW .")
-        powers = self.analyse.run_centrale(self.P)
-        #print(powers)
-        #self.afficher_graphique(powers)
-
-        #self.figure = partie_physique.run_centrale(Q, h, eta)
-        #self.canvas = FigureCanvas(self.figure)
-        #self.layout_droite.addWidget(self.canvas)
-        #print(self.y)
-        evaluation= self.analyse.evaluation_puissance(self.P)
-        self.label_evaluation.setText(evaluation)
-
-        self.analyse.afficher_graphique()
-
-
-
-
-        #============== sprint2 ==============
-        #ima= QtGui.QPixmap('barrage.png')
-        #self.image_label.setPixmap(ima)
-        #============== sprint2 ==============
+        self.ligne_bas.addWidget(self.label_resultat)
+        self.ligne_bas.addStretch()  #Ajout d'un espace a la ligne (layout)
+        self.ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
+        self.layout_gauche.addLayout(self.ligne_bas)
 
     # ========== AFFICHAGE IMAGE ==========
-    def create_image(self, image_path):
+    def affichage_image(self,image_path):
         self.image_label = QLabel(self)
         self.layout_visuelle.addWidget(self.image_label)
         pixmap = QPixmap(image_path)
         self.image_label.setPixmap(pixmap)
         self.image_label.setScaledContents(True)
 
-        if pixmap.isNull():
-            self.image_label.setText("Image not found or could not be loaded.")
-            return
+    #appelée quand on clicque le bouton
+    def bouton_click(self):
+
+        self.afficher_puissance()
+        print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un randement de {self.eta}, ce qui donne une puissance de {self.P:.2f} .")
+
+        #print(powers)
+        self.graphique.run_centrale(self.Q, self.h, self.eta)
+        #self.figure = partie_physique.run_centrale(Q, h, eta)
+        #self.canvas = FigureCanvas(self.figure)
+        #self.layout_droite.addWidget(self.canvas)
+        #print(self.y)
 
 
-
-    #====== affichage de la puissance=======
     def afficher_puissance(self):
         #utilise valeur du slider x
         self.Q= self.slider_Q.value()
         self.h= self.slider_h.value()
         self.eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
 
-        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
+        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
-    # ======= affichage du graphique=======
-    #def afficher_graphique(self, powers):
+    #def afficher_graphique(self,powers):
     #    x = list(range(1, len(powers) + 1))
     #    self.ax.clear()
-    #    self.ax.scatter(x,powers,s=10,color='steelblue', zorder=3)
-    #    self.ax.set_xlabel("Numéro de run", fontsize= 8)
-    #    self.ax.set_ylabel("Puissance (MW)", fontsize= 8)
-    #    self.ax.set_title("Puissance par run", fontsize= 10)
+    #    self.ax.scatter(x, [val for val in powers],s=10,color='steelblue', zorder=3)
+    #    self.ax.set_xlabel("Numéro de run")
+    #    self.ax.set_ylabel("Puissance (MW)")
+    #    self.ax.set_title("Puissance par run")
     #    self.ax.minorticks_on()
     #    self.ax.set_xticks(x)
-    #    #if max(powers)> 0:
-    #    #print(f"powers max: {max(powers)}")
-    #    #print(f"nbr ticks: {len(np.arange(0, max(powers), 200))}")
     #    self.y = np.arange(0,max(powers), 200)
     #    self.ax.set_yticks(self.y)
     #    #self.xaxis.set_minor_locator(AutoMinorLocator())
-    #    self.ax.grid( color="grey", linestyle="-", linewidth=0.5, alpha=0.8)
-    #    self.ax.grid(which= "minor", linestyle= "-", linewidth= .5, alpha=0.7)
-    #    self.ax.set_axisbelow(True)
+    #    self.ax.grid( color="grey", linestyle="-", linewidth=.5, alpha=0.6)
     #    self.fig.tight_layout()
-    #    self.canvas.draw()
+    #    self.canvas.draw()  # rafraîchit le canvas Qt
 
 
 
@@ -247,5 +216,71 @@ if __name__ == "__main__":
     widget = Interface()
     widget.show()
     sys.exit(app.exec())
+#
 
+
+##############################################################################################################
+# Crée par Mathis Robinet, Rayen Rouz, Alexis Paiement
+# Crée le 2026-02-17
+#420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
+##############################################################################################################
+import numpy
+import matplotlib.pyplot as plt
+import csv
+import numpy as np
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+
+
+from matplotlib.backends.backend_template import FigureCanvas
+
+import loi_physique
+import os
+
+
+
+class Graphique(FigureCanvasQTAgg):
+    def __init__(self):
+        # ======= FIGURE ========
+        self.fig = Figure()
+        self.ax = self.fig.add_subplot(111)
+        super().__init__(self.fig)
+
+        # ======DONNÉES =======
+        self.filename = "scatter_power.csv"
+        self.powers = []
+
+
+    def run_centrale(self,Q, h, eta, g=9.81, rho=1000):
+        P = loi_physique.calculer_puissance(Q,h,eta,g,rho)/1000000
+
+        if len(self.powers) >= 10:
+                del self.powers[0]  # supprime la plus vieille valeur
+        self.powers.append(P)  # ajoute toujours le nouveau p
+        self.sauvegarder_csv(P)
+        self.afficher_graphique()
+
+    def sauvegarder_csv(self,P):
+        with open("scatter_power.csv", 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for power_val in self.powers:
+                writer.writerow([power_val])
+
+    def afficher_graphique(self):
+        if not self.powers:
+            return
+        x = list(range(1, len(self.powers) + 1))
+        self.ax.clear()
+        self.ax.scatter(x, self.powers, s=10, color='steelblue', zorder=3)
+        self.ax.set_xlabel("Numéro de run")
+        self.ax.set_ylabel("Puissance (MW)")
+        self.ax.set_title("Puissance par run")
+        self.ax.minorticks_on()
+        self.ax.set_xticks(x)
+        self.y = np.arange(0, max(self.powers), 200)
+        self.ax.set_yticks(self.y)
+        # self.xaxis.set_minor_locator(AutoMinorLocator())
+        self.ax.grid(color="grey", linestyle="-", linewidth=.5, alpha=0.6)
+        self.fig.tight_layout()
+        self.draw()  # rafraîchit le canvas Qt
 

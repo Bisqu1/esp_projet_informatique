@@ -4,27 +4,33 @@
 # 420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
 #  partie-physique.py
 ##############################################################################################################
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
 import csv
 import loi_physique
 import os
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
 
-class analyse_donnees:
+class AnalyseDonnees(FigureCanvasQTAgg):
     def __init__(self):
-        a=1
+        self.fig = Figure()
+        self.ax = self.fig.add_subplot(111)
+        super().__init__(self.fig)
 
-    def evaluation_energie(self,Q, h, eta, masse_volumique=1000, g=9.81):
-        p = loi_physique.calculer_puissance(Q, h, eta, masse_volumique, g) / 1_000_000
+        self.filename = "scatter_power.csv"
+        self.powers = []
+        #self.charger_csv()
+
+    def evaluation_puissance(self,p):
         # print(p / 1000, "kW")
         #
         if p < 72:
-            E_eval = "Il n'y a pas assez d'énergie pour alimenter tous les habitants du village"
+            return f"Il n'y a pas assez de puissance pour alimenter tous les habitants du village, il manque {abs(p-72): .2f} MW"
         else:
-            E_eval = "Il y a {p - 72: .2f} MW en surplus"
+            return f"Il y a {p - 72: .2f} MW en surplus"
 
-        return E_eval
-    def run_centrale(self,Q, h, eta, masse_volumique=1000, g=9.81):
+    def run_centrale(self,p):
         #rendement = float(input("Quelle est le rendement de la centrale: "))
         #while not (0.6 <= eta <= 0.9):
         #    print("Le rendement de la centrale doit être compris entre 0.6 et 0.9")
@@ -34,38 +40,58 @@ class analyse_donnees:
         #while not (10 <= Q <= 1000):
         #    print("Le débit de la centrale doit être compris entre 10 et 1000 m³/s")
         #    Q = float(input("Quelle est le débit d'eau: "))
-    ##
-        ##Calcul
-        p = loi_physique.calculer_puissance(Q, h, eta, masse_volumique, g)/1_000_000
-        #print(p / 1000, "kW")
-    #
-        if p < 72:
-            E_eval="Il n'y a pas assez d'énergie pour alimenter tous les habitants du village"
-        else:
-            E_eval="Il y a {p - 72: .2f} MW en surplus"
-    #
+
         ##Fichier CSV
-        filename = "scatter_power.csv"
-        powers = []
 
-        if os.path.exists(filename):
-            try:
-                with open(filename, newline='') as csvfile:
-                    reader = csv.reader(csvfile)
-                    for row in reader:
-                        if row:
-                            powers.append(float(row[0]))
-            except (ValueError, IOError) as e:
-                print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
-                powers = []
+        if len(self.powers) >= 10:
+            del self.powers[0]  # supprime la plus vieille valeur
+        self.powers.append(p)  # ajoute toujours le nouveau p
+        self.sauvegarder_csv(p)
+        return self.powers
 
-        if len(powers) >= 10:
-            del powers[0]  # supprime la plus vieille valeur
-        powers.append(p)  # ajoute toujours le nouveau p
 
-        with open(filename, 'w', newline='') as csvfile:
+    #def charger_csv(self):
+    #    """
+    #    charge l'historique des anciens runs depuis scatter_power.csv
+    #    appelée automatiquement dans __init__
+    #    réinitialise self.power si scatter_power.csv ne fonctionne pas
+    #    """
+    #    if os.path.exists(self.filename):
+    #        try:
+    #            with open(self.filename, newline='') as csvfile:
+    #                reader = csv.reader(csvfile)
+    #                for row in reader:
+    #                    if row:
+    #                        self.powers.append(float(row[0]))
+    #        except (ValueError, IOError) as e:
+    #            print(f"Avertissement : erreur de lecture du CSV ({e}). Réinitialisation.")
+    #            self.powers = []
+
+    def sauvegarder_csv(self,p):
+        with open(self.filename, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            for power_val in powers:
-                writer.writerow([power_val])
-        return powers
+            writer.writerow([p])
 
+    def afficher_graphique(self):
+        x = list(range(1, len(self.powers) + 1))
+        self.ax.clear()
+        self.ax.scatter(x, self.powers, s=10, color='steelblue', zorder=3)
+        self.ax.set_xlabel("Numéro de run", fontsize=8)
+        self.ax.set_ylabel("Puissance (MW)", fontsize=8)
+        self.ax.set_title("Puissance par run", fontsize=10)
+        self.ax.minorticks_on()
+        self.ax.set_xticks(x)
+        # if max(powers)> 0:
+        # print(f"powers max: {max(self.powers)}")
+        # print(f"nbr ticks: {len(np.arange(0, max(powself.powersers), 200))}")
+        self.y = np.arange(0, max(self.powers), 200)
+        self.ax.set_yticks(self.y)
+        # self.xaxis.set_minor_locator(AutoMinorLocator())
+        self.ax.grid(color="grey", linestyle="-", linewidth=0.5, alpha=0.8)
+        self.ax.grid(which="minor", linestyle="-", linewidth=.5, alpha=0.7)
+        self.ax.set_axisbelow(True)
+        self.fig.tight_layout()
+        self.draw()
+
+    def afficher_tableau(self):
+        pass

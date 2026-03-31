@@ -167,7 +167,34 @@ class Interface(QtWidgets.QWidget):
         self.label_evaluation = QtWidgets.QLabel()
         self.ligne_evaluation.addWidget(self.label_evaluation)
 
+        self.button_zoom = QtWidgets.QPushButton("zoom")
+        self.button_zoom.setFixedWidth(30)
+        self.button_zoom.clicked.connect(self.toggle_zoom_graphique)
+        self.layout_droite.addWidget(self.button_zoom)
 
+        self.analyse.mouseDoubleClickEvent = lambda e: self.toggle_zoom_graphique()
+
+    #def bouton_plein_ecran_graphique(self):
+    #    self.fenetre_graphique = QtWidgets.QDialog(self)
+    #    self.fenetre_graphique.setWindowTitle("Graphique — Puissance par run")
+    #    self.fenetre_graphique.setGeometry(100, 100, 900, 600)
+#
+    #    layout = QtWidgets.QVBoxLayout(self.fenetre_graphique)
+    #    layout.addWidget(self.analyse)  # déplace le graphique dans la nouvelle fenêtre
+#
+    #    self.fenetre_graphique.exec()
+
+    def toggle_zoom_graphique(self):
+        if self.panneau_Igauche.isVisible():
+            # ---- mode plein écran ----
+            self.panneau_Igauche.hide()
+            self.zone_visuelle.hide()
+            self.button_zoom.setText("doubleclic pour réduire")
+        else:
+            # ---- mode normal ----
+            self.panneau_Igauche.show()
+            self.zone_visuelle.show()
+            self.button_zoom.setText("dézommer")
     #====appelée quand on clicque le bouton=====
     def bouton_click(self):
         self.afficher_puissance()
