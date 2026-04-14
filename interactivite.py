@@ -324,7 +324,7 @@ class Interface(QtWidgets.QWidget):
 
         self.P = self.calculs.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
-         self.verifier_realisme()
+        self.verifier_realisme()
         # ======= vérification du réalisme des valeurs =======
     def verifier_realisme(self):
         avertissements = []
