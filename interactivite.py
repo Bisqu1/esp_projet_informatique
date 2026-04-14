@@ -30,7 +30,7 @@ class Interface(QtWidgets.QWidget):
         self.initUI()
 
         #apelle fonction pour afficher image
-        self.create_image("imagebarragetest1.png")
+        self.create_image("image/imagebarrage_lumiere10.png")
     def initUI(self):
 
     #=============FENÊTRE ===========
@@ -181,13 +181,10 @@ class Interface(QtWidgets.QWidget):
     def bouton_click(self):
         self.afficher_puissance()
         print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P} MW .")
-        powers = partie_physique.run_centrale(self.Q, self.h, self.eta)
-        #print(powers)
-        self.afficher_graphique(powers)
-        #self.figure = partie_physique.run_centrale(Q, h, eta)
-        #self.canvas = FigureCanvas(self.figure)
-        #self.layout_droite.addWidget(self.canvas)
-        #print(self.y)
+        self.p = partie_physique.run_centrale(self.Q, self.h, self.eta)
+
+        self.afficher_graphique(self.p)
+
 
     # ========== AFFICHAGE IMAGE ==========
     def create_image(self, image_path):
@@ -201,6 +198,41 @@ class Interface(QtWidgets.QWidget):
             self.image_label.setText("Image not found or could not be loaded.")
             return
 
+        #consommation =
+
+        if self.p < consommation * 0.10:
+            pixmap0 = QPixmap("image/imagebarrage_lumiere0.png")
+            self.image_label.setPixmap(pixmap0)
+        elif self.p < consommation * 0.20 and self.p >= consommation * 0.10:
+            pixmap1 = QPixmap("image/imagebarrage_lumiere1.png")
+            self.image_label.setPixmap(pixmap1)
+        elif self.p < consommation * 0.30 and self.p >= consommation * 0.20:
+            pixmap2 = QPixmap("image/imagebarrage_lumiere2.png")
+            self.image_label.setPixmap(pixmap2)
+        elif self.p < consommation * 0.40 and self.p >= consommation * 0.30:
+            pixmap3 = QPixmap("image/imagebarrage_lumiere3.png")
+            self.image_label.setPixmap(pixmap3)
+        elif self.p < consommation * 0.50 and self.p >= consommation * 0.40:
+            pixmap4 = QPixmap("image/imagebarrage_lumiere4.png")
+            self.image_label.setPixmap(pixmap4)
+        elif self.p < consommation * 0.60 and self.p >= consommation * 0.50:
+            pixmap5 = QPixmap("image/imagebarrage_lumiere5.png")
+            self.image_label.setPixmap(pixmap5)
+        elif self.p < consommation * 0.70 and self.p >= consommation * 0.60:
+            pixmap6 = QPixmap("image/imagebarrage_lumiere6.png")
+            self.image_label.setPixmap(pixmap6)
+        elif self.p < consommation * 0.80 and self.p >= consommation * 0.70:
+            pixmap7 = QPixmap("image/imagebarrage_lumiere7.png")
+            self.image_label.setPixmap(pixmap7)
+        elif self.p < consommation * 0.90 and self.p >= consommation * 0.80:
+            pixmap8 = QPixmap("image/imagebarrage_lumiere8.png")
+            self.image_label.setPixmap(pixmap8)
+        elif self.p < consommation and self.p >= consommation * 0.90:
+            pixmap9 = QPixmap("image/imagebarrage_lumiere9.png")
+            self.image_label.setPixmap(pixmap9)
+        elif self.p > consommation:
+            pixmap10 = QPixmap("image/imagebarrage_lumiere10.png")
+            self.image_label.setPixmap(pixmap10)
 
 
     #====== affichage de la puissance=======
