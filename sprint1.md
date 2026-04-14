@@ -8,9 +8,9 @@ Simulation d'une centrale hydroélectrique.
 - Alexis Paiement
 
 ## Besoins d'utilisateurs choisis - sprint 2 
-- 3. Avoir un village a la luminosité variable selon la quantité d’énergie produite par la centrale 
-- 6.  En tant qu’utilisateur je veux configurer résistance dans les câbles afin d’observer une perte énergétique.
-- 5. En tant qu’utilisateur je veux un programme qui m’avertie quand l’énergie produite(une des entrée) devient irréaliste.
+- 3. Avoir un village a la luminosité variable selon la quantité de puissance produite par la centrale 
+- 6.  En tant qu’utilisateur je veux configurer résistance dans les câbles afin d’observer une perte de puissance.
+- 5. En tant qu’utilisateur je veux un programme qui m’avertie quand la puissance produite(une des entrée) devient irréaliste.
 
 
 
