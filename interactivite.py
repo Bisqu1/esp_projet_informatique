@@ -150,15 +150,32 @@ class Interface(QtWidgets.QWidget):
         self.slider_h.valueChanged.connect(self.afficher_puissance)  #quand valeurs des sliders change apelle fonction qui recalcule puissance
         self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
-    # ==============LABEL RESULTAT=================
-        self.ligne_bas= QtWidgets.QHBoxLayout()
-        self.label_resultat = QtWidgets.QLabel("Puissance: MW")  #creation widget label pour afficher résulat puissance
+        # ==============LABEL RÉSULTAT=================
+        self.ligne_bas = QtWidgets.QHBoxLayout()
+        self.label_resultat = QtWidgets.QLabel("Puissance: MW")
         self.button = QtWidgets.QPushButton("Début")
-        self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
+        self.button.clicked.connect(self.bouton_click)
         self.ligne_bas.addWidget(self.label_resultat)
-        self.ligne_bas.addStretch()  #Ajout d'un espace a la ligne (layout)
-        self.ligne_bas.addWidget(self.button)  #pour que le bouton soit a droite
+        self.ligne_bas.addStretch()
+        self.ligne_bas.addWidget(self.button)
         self.layout_gauche.addLayout(self.ligne_bas)
+
+        # ==============LABEL AVERTISSEMENTS=================
+        self.label_avertissement = QtWidgets.QLabel("")
+        self.label_avertissement.setWordWrap(True)
+        self.label_avertissement.setStyleSheet("""
+                    QLabel {
+                        color: red;
+                        background-color: #fff3cd;
+                        border: 1px solid black;
+                        border-radius: 2px;
+                         max-height: 3em;
+                         min-height: 1em;
+                        padding: 2px 4px;
+                    }
+                """)
+        self.label_avertissement.hide()  # caché par défaut
+        self.layout_gauche.addWidget(self.label_avertissement)
 
     #====appelée quand on clicque le bouton=====
     def bouton_click(self):
@@ -195,6 +212,34 @@ class Interface(QtWidgets.QWidget):
 
         self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
+        self.verifier_realisme()
+
+    # ======= vérification du réalisme des valeurs =======
+    def verifier_realisme(self):
+        avertissements = []
+
+        # Limites pour une centrale de village (72 MW)
+        if self.Q > 400:
+            avertissements.append(f"⚠️ Débit trop élevé ({self.Q} m³/s), un village à typiquement besoin de moins de 400 m³/s de débit.")
+        if self.Q < 10:
+            avertissements.append(f"⚠️ Débit trop faible ({self.Q} m³/s), production négligeable.")
+
+        if self.h > 200:
+            avertissements.append(f"⚠️ Hauteur de chute très élevée ({self.h} m), rare pour un site de village.")
+        if self.h < 2:
+            avertissements.append(f"⚠️ Hauteur de chute trop faible ({self.h} m), irréaliste.")
+
+        if self.P > 72:
+            avertissements.append(f"⚠️ Puissance de {self.P:.1f} MW dépasse les besoins du village.")
+        elif self.P < 72 and (self.Q > 0 and self.h > 0):
+            avertissements.append(
+                f"⚠️ Puissance de {self.P:.1f} MW est insuffisante pour un village.")
+
+        if avertissements:
+            self.label_avertissement.setText("\n".join(avertissements))
+            self.label_avertissement.show()
+        else:
+            self.label_avertissement.hide()
 
     # ======= affichage du graphique=======
     def afficher_graphique(self, powers):
