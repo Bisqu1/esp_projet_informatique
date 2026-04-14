@@ -169,8 +169,8 @@ class Interface(QtWidgets.QWidget):
                         background-color: #fff3cd;
                         border: 1px solid black;
                         border-radius: 2px;
-                         max-height: 3em;
-                         min-height: 1em;
+                        max-height: 3em;
+                        min-height: 1em;
                         padding: 2px 4px;
                     }
                 """)
@@ -242,7 +242,7 @@ class Interface(QtWidgets.QWidget):
         self.h= self.slider_h.value()
         self.eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
 
-        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
+        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1 million pour convertir en mega watts
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
         self.verifier_realisme()
 
@@ -257,7 +257,7 @@ class Interface(QtWidgets.QWidget):
             avertissements.append(f"⚠️ Débit trop faible ({self.Q} m³/s), production négligeable.")
 
         if self.h > 200:
-            avertissements.append(f"⚠️ Hauteur de chute très élevée ({self.h} m), rare pour un site de village.")
+            avertissements.append(f"⚠️ Hauteur de chute très élevée ({self.h} m), rare pour un village.")
         if self.h < 2:
             avertissements.append(f"⚠️ Hauteur de chute trop faible ({self.h} m), irréaliste.")
 
