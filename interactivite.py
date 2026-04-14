@@ -30,7 +30,7 @@ class Interface(QtWidgets.QWidget):
         self.initUI()
 
         #apelle fonction pour afficher image
-        self.create_image("imagebarragetest1.png")
+        self.create_image("image/imagebarrage_lumiere10.png")
     def initUI(self):
 
     #=============FENÊTRE ===========
