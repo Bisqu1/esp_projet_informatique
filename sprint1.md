@@ -7,10 +7,10 @@ Simulation d'une centrale hydroélectrique.
 - Rayen Rouz
 - Alexis Paiement
 
-## Besoins d'utilisateurs choisis - sprint 1 
-- 2: Sauvegarder le graphique fais avec matplotlib et l’afficher sur une zone de l’écran dédié à l’aide de Pyqt
-- 7: Afficher les données voulus (bouton START/STOP) quand je veux sous forme de tableaux ou sous autre format.
-- 1: Pouvoir modifier certaines variables de l’équation (i) sur la fenêtre en utilisant la librairie Pyqt. (𝑷=𝜼⋅𝝆⋅𝒈⋅𝑸⋅𝑯 (𝒊) )
+## Besoins d'utilisateurs choisis - sprint 2 
+- 3. Avoir un village a la luminosité variable selon la quantité d’énergie produite par la centrale 
+- 6.  En tant qu’utilisateur je veux configurer résistance dans les câbles afin d’observer une perte énergétique.
+- 5. En tant qu’utilisateur je veux un programme qui m’avertie quand l’énergie produite(une des entrée) devient irréaliste.
 
 
 
