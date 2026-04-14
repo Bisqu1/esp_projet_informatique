@@ -20,7 +20,7 @@ import sys
 
 import numpy as np
 
-from loi_physique import calculs_physique
+import loi_physique
 from partie_physique import AnalyseDonnees
 
 
@@ -28,7 +28,6 @@ class Interface(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.analyse = AnalyseDonnees()  # créer obj
-        self.calculs = calculs_physique()
         self.initUI()
 
 
@@ -133,47 +132,6 @@ class Interface(QtWidgets.QWidget):
         self.ligne_eta.addWidget(self.spinbox_eta)
         self.layout_gauche.addLayout(self.ligne_eta)
 
-        # -----CONSOMMATION ÉNREGETIQUE MAISON (C)----
-
-        self.ligne_conso = QtWidgets.QHBoxLayout()
-
-        self.label_conso = QtWidgets.QLabel("Consommation (C):")
-
-        self.slider_conso = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_conso.setRange(10, 30)
-        self.slider_conso.setValue(14)
-
-        self.spinbox_conso = QtWidgets.QDoubleSpinBox()
-        self.spinbox_conso.setRange(10,30 )
-        self.spinbox_conso.setValue(14)
-        self.spinbox_conso.setSingleStep(1)
-
-        self.ligne_conso.addWidget(self.label_conso)
-        self.ligne_conso.addWidget(self.slider_conso)
-        self.ligne_conso.addWidget(self.spinbox_conso)
-        self.layout_gauche.addLayout(self.ligne_conso)
-        self.spinbox_conso.setSuffix(" kW")
-#
-        ## -----LONGUEUR DES CABLES (L)----
-        self.ligne_L = QtWidgets.QHBoxLayout()
-
-        self.label_L = QtWidgets.QLabel("longueur cables (L): ")
-
-        self.slider_L = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_L.setRange(30_000, 90_000)
-        self.slider_conso.setValue(50_000)
-
-        self.spinbox_L = QtWidgets.QDoubleSpinBox()
-        self.spinbox_L.setRange(30_000, 90_000)
-        self.spinbox_L.setValue(50_000)
-        self.spinbox_L.setSingleStep(1)
-
-        self.ligne_L.addWidget(self.label_L)
-        self.ligne_L.addWidget(self.slider_L)
-        self.ligne_L.addWidget(self.spinbox_L)
-        self.layout_gauche.addLayout(self.ligne_L)
-        self.spinbox_L.setSuffix(" m")
-
     #===============CONNEXION================
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
             #---- connexion Q spinbox avec slider --------
@@ -188,16 +146,12 @@ class Interface(QtWidgets.QWidget):
         self.slider_eta.valueChanged.connect(lambda v: self.spinbox_eta.setValue(v / 100))  #quand valeur slider change (entier`[0,100]) divise par 100 pour setValue de spinbox en decimal
         self.spinbox_eta.valueChanged.connect(lambda v: self.slider_eta.setValue(int(v * 100)))  #spinbox change (decimal, [0,1]) multiplie par 100 pour setValue de slider en entier
 
-            # ---- connexion conso spinbox avec slider --------
-        self.slider_conso.valueChanged.connect(self.spinbox_conso.setValue)
-        self.spinbox_conso.valueChanged.connect(self.slider_conso.setValue)
-            # ---- connexion longueur cables spinbox avec slider --------
-        self.slider_L.valueChanged.connect(self.spinbox_L.setValue)
-        self.spinbox_L.valueChanged.connect(self.slider_L.setValue)
 
 
-
-
+        # ---- CONNEXION CALCUL----
+        self.slider_Q.valueChanged.connect(self.afficher_puissance)
+        self.slider_h.valueChanged.connect(self.afficher_puissance)  #quand valeurs des sliders change apelle fonction qui recalcule puissance
+        self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
     # ==============LABEL RESULTAT=================
         self.ligne_resultat= QtWidgets.QHBoxLayout()
@@ -213,16 +167,34 @@ class Interface(QtWidgets.QWidget):
         self.label_evaluation = QtWidgets.QLabel()
         self.ligne_evaluation.addWidget(self.label_evaluation)
 
-    # ---- CONNEXION CALCUL----
-        self.slider_Q.valueChanged.connect(self.clear_text)
-        self.slider_eta.valueChanged.connect(self.clear_text)
-        self.slider_h.valueChanged.connect(self.clear_text)
-        #if self.slider_Q.valueChanged:
-        #    self.label_resultat.clear()
+        self.button_zoom = QtWidgets.QPushButton("zoom")
+        self.button_zoom.setFixedWidth(30)
+        self.button_zoom.clicked.connect(self.toggle_zoom_graphique)
+        self.layout_droite.addWidget(self.button_zoom)
 
-        # self.slider_h.valueChanged.connect(self.afficher_puissance)  #quand valeurs des sliders change apelle fonction qui recalcule puissance
-        # self.slider_eta.valueChanged.connect(self.afficher_puissance)
+        self.analyse.mouseDoubleClickEvent = lambda e: self.toggle_zoom_graphique()
 
+    #def bouton_plein_ecran_graphique(self):
+    #    self.fenetre_graphique = QtWidgets.QDialog(self)
+    #    self.fenetre_graphique.setWindowTitle("Graphique — Puissance par run")
+    #    self.fenetre_graphique.setGeometry(100, 100, 900, 600)
+#
+    #    layout = QtWidgets.QVBoxLayout(self.fenetre_graphique)
+    #    layout.addWidget(self.analyse)  # déplace le graphique dans la nouvelle fenêtre
+#
+    #    self.fenetre_graphique.exec()
+
+    def toggle_zoom_graphique(self):
+        if self.panneau_Igauche.isVisible():
+            # ---- mode plein écran ----
+            self.panneau_Igauche.hide()
+            self.zone_visuelle.hide()
+            self.button_zoom.setText("doubleclic pour réduire")
+        else:
+            # ---- mode normal ----
+            self.panneau_Igauche.show()
+            self.zone_visuelle.show()
+            self.button_zoom.setText("dézommer")
     #====appelée quand on clicque le bouton=====
     def bouton_click(self):
         self.afficher_puissance()
@@ -239,7 +211,7 @@ class Interface(QtWidgets.QWidget):
         self.label_evaluation.setText(evaluation)
 
         self.analyse.afficher_graphique()
-        self.afficher_perte()
+
 
 
 
@@ -260,41 +232,6 @@ class Interface(QtWidgets.QWidget):
             self.image_label.setText("Image not found or could not be loaded.")
             return
 
-        #consommation =
-
-        if self.p < consommation * 0.10:
-            pixmap0 = QPixmap("image/imagebarrage_lumiere0.png")
-            self.image_label.setPixmap(pixmap0)
-        elif self.p < consommation * 0.20 and self.p >= consommation * 0.10:
-            pixmap1 = QPixmap("image/imagebarrage_lumiere1.png")
-            self.image_label.setPixmap(pixmap1)
-        elif self.p < consommation * 0.30 and self.p >= consommation * 0.20:
-            pixmap2 = QPixmap("image/imagebarrage_lumiere2.png")
-            self.image_label.setPixmap(pixmap2)
-        elif self.p < consommation * 0.40 and self.p >= consommation * 0.30:
-            pixmap3 = QPixmap("image/imagebarrage_lumiere3.png")
-            self.image_label.setPixmap(pixmap3)
-        elif self.p < consommation * 0.50 and self.p >= consommation * 0.40:
-            pixmap4 = QPixmap("image/imagebarrage_lumiere4.png")
-            self.image_label.setPixmap(pixmap4)
-        elif self.p < consommation * 0.60 and self.p >= consommation * 0.50:
-            pixmap5 = QPixmap("image/imagebarrage_lumiere5.png")
-            self.image_label.setPixmap(pixmap5)
-        elif self.p < consommation * 0.70 and self.p >= consommation * 0.60:
-            pixmap6 = QPixmap("image/imagebarrage_lumiere6.png")
-            self.image_label.setPixmap(pixmap6)
-        elif self.p < consommation * 0.80 and self.p >= consommation * 0.70:
-            pixmap7 = QPixmap("image/imagebarrage_lumiere7.png")
-            self.image_label.setPixmap(pixmap7)
-        elif self.p < consommation * 0.90 and self.p >= consommation * 0.80:
-            pixmap8 = QPixmap("image/imagebarrage_lumiere8.png")
-            self.image_label.setPixmap(pixmap8)
-        elif self.p < consommation and self.p >= consommation * 0.90:
-            pixmap9 = QPixmap("image/imagebarrage_lumiere9.png")
-            self.image_label.setPixmap(pixmap9)
-        elif self.p > consommation:
-            pixmap10 = QPixmap("image/imagebarrage_lumiere10.png")
-            self.image_label.setPixmap(pixmap10)
 
 
     #====== affichage de la puissance=======
@@ -304,14 +241,8 @@ class Interface(QtWidgets.QWidget):
         self.h= self.slider_h.value()
         self.eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
 
-        self.P = self.calculs.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
+        self.P = loi_physique.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
-
-    # ====== affichage de la perte de puissance=======
-    def afficher_perte(self):
-        self.U = 745000
-        self.Pui = self.calculs.calculer_pertes(self.U)
-        print(self.Pui)
 
     # ======= affichage du graphique=======
     #def afficher_graphique(self, powers):
