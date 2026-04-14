@@ -30,10 +30,10 @@ class Interface(QtWidgets.QWidget):
         self.analyse = AnalyseDonnees()  # créer obj
         self.calculs = calculs_physique()
         self.initUI()
-
+        self.P = 9
 
         #apelle fonction pour afficher image
-        self.create_image("image/copiebarragetest6.png")
+        self.create_image("image/imagebarrage_lumiere0.png")
         #bonne image copiebarragetest6.png dimension 1200, 570 ou multiple
     def initUI(self):
 
@@ -260,39 +260,39 @@ class Interface(QtWidgets.QWidget):
             self.image_label.setText("Image not found or could not be loaded.")
             return
 
-        #consommation =
+        consommation  = float(self.slider_conso.value())
 
-        if self.p < consommation * 0.10:
+        if self.P < consommation * 0.10:
             pixmap0 = QPixmap("image/imagebarrage_lumiere0.png")
             self.image_label.setPixmap(pixmap0)
-        elif self.p < consommation * 0.20 and self.p >= consommation * 0.10:
+        elif self.P < consommation * 0.20 and self.P >= consommation * 0.10:
             pixmap1 = QPixmap("image/imagebarrage_lumiere1.png")
             self.image_label.setPixmap(pixmap1)
-        elif self.p < consommation * 0.30 and self.p >= consommation * 0.20:
+        elif self.P < consommation * 0.30 and self.P >= consommation * 0.20:
             pixmap2 = QPixmap("image/imagebarrage_lumiere2.png")
             self.image_label.setPixmap(pixmap2)
-        elif self.p < consommation * 0.40 and self.p >= consommation * 0.30:
+        elif self.P < consommation * 0.40 and self.P >= consommation * 0.30:
             pixmap3 = QPixmap("image/imagebarrage_lumiere3.png")
             self.image_label.setPixmap(pixmap3)
-        elif self.p < consommation * 0.50 and self.p >= consommation * 0.40:
+        elif self.P < consommation * 0.50 and self.P >= consommation * 0.40:
             pixmap4 = QPixmap("image/imagebarrage_lumiere4.png")
             self.image_label.setPixmap(pixmap4)
-        elif self.p < consommation * 0.60 and self.p >= consommation * 0.50:
+        elif self.P < consommation * 0.60 and self.P >= consommation * 0.50:
             pixmap5 = QPixmap("image/imagebarrage_lumiere5.png")
             self.image_label.setPixmap(pixmap5)
-        elif self.p < consommation * 0.70 and self.p >= consommation * 0.60:
+        elif self.P < consommation * 0.70 and self.P >= consommation * 0.60:
             pixmap6 = QPixmap("image/imagebarrage_lumiere6.png")
             self.image_label.setPixmap(pixmap6)
-        elif self.p < consommation * 0.80 and self.p >= consommation * 0.70:
+        elif self.P < consommation * 0.80 and self.P >= consommation * 0.70:
             pixmap7 = QPixmap("image/imagebarrage_lumiere7.png")
             self.image_label.setPixmap(pixmap7)
-        elif self.p < consommation * 0.90 and self.p >= consommation * 0.80:
+        elif self.P < consommation * 0.90 and self.P >= consommation * 0.80:
             pixmap8 = QPixmap("image/imagebarrage_lumiere8.png")
             self.image_label.setPixmap(pixmap8)
-        elif self.p < consommation and self.p >= consommation * 0.90:
+        elif self.P < consommation and self.P >= consommation * 0.90:
             pixmap9 = QPixmap("image/imagebarrage_lumiere9.png")
             self.image_label.setPixmap(pixmap9)
-        elif self.p > consommation:
+        elif self.P > consommation:
             pixmap10 = QPixmap("image/imagebarrage_lumiere10.png")
             self.image_label.setPixmap(pixmap10)
     # ====== supprime le texte de ces labels=======
