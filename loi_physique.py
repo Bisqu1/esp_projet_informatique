@@ -18,7 +18,7 @@ class calculs_physique():
         pass
 
 
-    def calculer_pertes(self, U= 745_000, resistivite= 0.000_01, L=50_000, D= 0.135):
+    def calculer_pertes(self,L,  U= 745_000, resistivite= 0.000_01 , D= 0.135):
         A= 2*math.pi*(D/2)
         R = (resistivite*L)/A
         I = self.puissance_W/U

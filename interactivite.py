@@ -277,31 +277,10 @@ class Interface(QtWidgets.QWidget):
 
     # ====== affichage de la perte de puissance=======
     def afficher_perte(self):
-        self.U = 745000
-        self.Pui = self.calculs.calculer_pertes(self.U)
-        print(self.Pui)
 
-    # ======= affichage du graphique=======
-    #def afficher_graphique(self, powers):
-    #    x = list(range(1, len(powers) + 1))
-    #    self.ax.clear()
-    #    self.ax.scatter(x,powers,s=10,color='steelblue', zorder=3)
-    #    self.ax.set_xlabel("Numéro de run", fontsize= 8)
-    #    self.ax.set_ylabel("Puissance (MW)", fontsize= 8)
-    #    self.ax.set_title("Puissance par run", fontsize= 10)
-    #    self.ax.minorticks_on()
-    #    self.ax.set_xticks(x)
-    #    #if max(powers)> 0:
-    #    #print(f"powers max: {max(powers)}")
-    #    #print(f"nbr ticks: {len(np.arange(0, max(powers), 200))}")
-    #    self.y = np.arange(0,max(powers), 200)
-    #    self.ax.set_yticks(self.y)
-    #    #self.xaxis.set_minor_locator(AutoMinorLocator())
-    #    self.ax.grid( color="grey", linestyle="-", linewidth=0.5, alpha=0.8)
-    #    self.ax.grid(which= "minor", linestyle= "-", linewidth= .5, alpha=0.7)
-    #    self.ax.set_axisbelow(True)
-    #    self.fig.tight_layout()
-    #    self.canvas.draw()
+        self.L= self.slider_L.value()
+        self.Pui = self.calculs.calculer_pertes(self.L)
+        print(self.Pui)
 
 
 
