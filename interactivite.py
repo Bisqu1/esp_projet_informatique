@@ -295,7 +295,10 @@ class Interface(QtWidgets.QWidget):
         elif self.p > consommation:
             pixmap10 = QPixmap("image/imagebarrage_lumiere10.png")
             self.image_label.setPixmap(pixmap10)
-
+    # ====== supprime le texte de ces labels=======
+    def clear_text(self):
+        self.label_resultat.setText("Puissance: --- MW")
+        self.label_evaluation.setText("---")
 
     #====== affichage de la puissance=======
     def afficher_puissance(self):
