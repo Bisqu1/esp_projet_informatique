@@ -283,6 +283,7 @@ class Interface(QtWidgets.QWidget):
 
         self.slider_conso.valueChanged.connect(lambda: self.clear_text(evaluation=True))
         self.slider_L.valueChanged.connect(lambda: self.clear_text(perte=True))
+        self.slider_U.valueChanged.connect(lambda: self.clear_text(perte=True))
         #if self.slider_Q.valueChanged:
         #    self.label_resultat.clear()
 
@@ -300,7 +301,7 @@ class Interface(QtWidgets.QWidget):
         # sert à appeler la fonction quand on clique sur le bouton
         self.update_image()
 
-        self.analyse.afficher_graphique(self.consommation, self.perte)
+        self.analyse.afficher_graphique(self.consommation, self.perte, self.P)
 
 
 
