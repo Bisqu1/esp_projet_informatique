@@ -3,14 +3,20 @@
 
 ## À faire
 - #### PRIORITÉ
-    - implémentation perte d'énergie (loi de Joule, loi résistivité pour trouver resistance)
-    - évaluation +++ (mettre limite a atteindre pour alimentation village)
-    - implémentation consommation différente selon période journée ( limite change)
+    - fixer bug graph a +10 run
+    - image barrage pas écrasé
+    - Avoir idée ce que represente X MW
+    - Comparée production puissance avec consommation ville connue 
+      (mettre des presets, en appuyant dessus met valeurs consommation de la ville)
+    - appuyer bouton pour changer slider et équation afficher
+    - Consommation differente en fonction de la journée (afficher plusieur point)
+    - comparée production barrage avec valeur réel (appuyer sur preset et mettre valeur barrage connu)
+  
     
 - #### OPTIONNEL
+     
     - fonctionnalité zoom/dézoom graphique en double cliquant sur graphique ou sur autre bouton
     - fonctionnalité remplacer graphique par tableau en appuyant sur autre bouton
-    - differente image pour different moment journée
 
 ## Note
 - Équation
