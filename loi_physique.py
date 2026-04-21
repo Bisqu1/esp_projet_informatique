@@ -19,6 +19,19 @@ class calculs_physique():
 
 
     def calculer_pertes(self,p,L ,U, resistivite= 0.000_01 , D= 0.02):
+        """
+        Calcule la perte de puissance du transport d'énergie.
+        Perte = R * (I**2)
+
+        D: diamètre (m)
+        A: aire du segment de cable (m²)
+        R: resistance (ohm)
+        L: longueur de du cable (m)
+        resistivite: resistivite du materiel du cable (ohm * m)
+        I: intensité du courant (A)
+        U: tension parcourant cable (V)
+        p: puissance produit par la centrale (W)
+        """
         A= math.pi*((D/2)**2)
         R = (resistivite*L)/A
         I = p/(U*1000)
