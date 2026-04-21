@@ -5,7 +5,7 @@
 # interactivite.py
 ##############################################################################################################
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QSizePolicy
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap
 
@@ -142,19 +142,19 @@ class Interface(QtWidgets.QWidget):
         self.label_conso = QtWidgets.QLabel("Consommation (C):")
 
         self.slider_conso = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_conso.setRange(10, 30)
-        self.slider_conso.setValue(14)
+        self.slider_conso.setRange(1, 2000)
+        self.slider_conso.setValue(500)
 
         self.spinbox_conso = QtWidgets.QDoubleSpinBox()
-        self.spinbox_conso.setRange(10,30 )
-        self.spinbox_conso.setValue(14)
-        self.spinbox_conso.setSingleStep(1)
+        self.spinbox_conso.setRange(1,2000 )
+        self.spinbox_conso.setValue(500)
+        self.spinbox_conso.setSingleStep(50)
 
         self.ligne_conso.addWidget(self.label_conso)
         self.ligne_conso.addWidget(self.slider_conso)
         self.ligne_conso.addWidget(self.spinbox_conso)
         self.layout_gauche.addLayout(self.ligne_conso)
-        self.spinbox_conso.setSuffix(" kW")
+        self.spinbox_conso.setSuffix(" MW")
 #
         ## -----LONGUEUR DES CABLES (L)----
         self.ligne_L = QtWidgets.QHBoxLayout()
@@ -162,19 +162,39 @@ class Interface(QtWidgets.QWidget):
         self.label_L = QtWidgets.QLabel("longueur cables (L): ")
 
         self.slider_L = QtWidgets.QSlider(Qt.Horizontal)
-        self.slider_L.setRange(30_000, 90_000)
-        self.slider_conso.setValue(50_000)
+        self.slider_L.setRange(30, 90)
+        self.slider_L.setValue(50)
 
         self.spinbox_L = QtWidgets.QDoubleSpinBox()
-        self.spinbox_L.setRange(30_000, 90_000)
-        self.spinbox_L.setValue(50_000)
+        self.spinbox_L.setRange(30, 90)
+        self.spinbox_L.setValue(50)
         self.spinbox_L.setSingleStep(1)
 
         self.ligne_L.addWidget(self.label_L)
         self.ligne_L.addWidget(self.slider_L)
         self.ligne_L.addWidget(self.spinbox_L)
         self.layout_gauche.addLayout(self.ligne_L)
-        self.spinbox_L.setSuffix(" m")
+        self.spinbox_L.setSuffix(" km")
+
+        # -----Tension (U)----
+        self.ligne_U = QtWidgets.QHBoxLayout()
+
+        self.label_U = QtWidgets.QLabel("Tension des lignes (U): ")
+
+        self.slider_U = QtWidgets.QSlider(Qt.Horizontal)
+        self.slider_U.setRange(100, 1000)
+        self.slider_U.setValue(745)
+
+        self.spinbox_U = QtWidgets.QDoubleSpinBox()
+        self.spinbox_U.setRange(100, 1000)
+        self.spinbox_U.setValue(745)
+        self.spinbox_U.setSingleStep(10)
+
+        self.ligne_U.addWidget(self.label_U)
+        self.ligne_U.addWidget(self.slider_U)
+        self.ligne_U.addWidget(self.spinbox_U)
+        self.layout_gauche.addLayout(self.ligne_U)
+        self.spinbox_U.setSuffix(" kV")
 
     #===============CONNEXION================
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
@@ -197,6 +217,10 @@ class Interface(QtWidgets.QWidget):
         self.slider_L.valueChanged.connect(self.spinbox_L.setValue)
         self.spinbox_L.valueChanged.connect(self.slider_L.setValue)
 
+        # ---- connexion tension spinbox avec slider --------
+        self.slider_U.valueChanged.connect(self.spinbox_U.setValue)
+        self.spinbox_U.valueChanged.connect(self.slider_U.setValue)
+
 
 
 
@@ -210,30 +234,54 @@ class Interface(QtWidgets.QWidget):
         self.ligne_resultat.addStretch()  #Ajout d'un espace a la ligne (layout)
         self.ligne_resultat.addWidget(self.button)  #pour que le bouton soit a droite
         self.layout_gauche.addLayout(self.ligne_resultat)
-        self.ligne_evaluation = QtWidgets.QHBoxLayout()
-        self.layout_gauche.addLayout(self.ligne_evaluation)
-        self.label_evaluation = QtWidgets.QLabel()
-        self.ligne_evaluation.addWidget(self.label_evaluation)
+        #self.ligne_evaluation = QtWidgets.QHBoxLayout()
+        #self.layout_gauche.addLayout(self.ligne_evaluation)
+        #self.label_evaluation = QtWidgets.QLabel()
+        #self.ligne_evaluation.addWidget(self.label_evaluation)
+        self.ligne_perte =QtWidgets.QHBoxLayout()
+
+        self.label_perte = QtWidgets.QLabel("Perte de puissance: MW")
+        self.ligne_perte.addWidget(self.label_perte)
+        self.layout_gauche.addLayout(self.ligne_perte)
+
+
+
+
     # ==============LABEL AVERTISSEMENTS=================
         self.label_avertissement = QtWidgets.QLabel("")
         self.label_avertissement.setWordWrap(True)
+
         self.label_avertissement.setStyleSheet("""
-                    QLabel {
-                        color: red;
-                        background-color: #fff3cd;
-                        border: 1px solid black;
-                        border-radius: 2px;
-                        max-height: 3em;
-                        min-height: 1em;
-                        padding: 2px 4px;
-                    }
-                """)
+                            QLabel {
+                                color: red;
+                                background-color: #fff3cd;
+                                border: 1px solid black;
+                                border-radius: 2px;
+                                max-height: 3em;
+                                min-height: 1em;
+                                padding: 2px 4px;
+                            }
+                        """)
         self.label_avertissement.hide()  # caché par défaut
+
+        #self.ligne_avertissement = QtWidgets.QHBoxLayout()
+        #self.layout_gauche.addLayout(self.ligne_avertissement)
+        #self.ligne_avertissement.addWidget(self.label_avertissement)
+        self.label_avertissement.hide()
         self.layout_gauche.addWidget(self.label_avertissement)
+
+
+        self.label_avertissement.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+
+
+
     # ---- CONNEXION CALCUL----
-        self.slider_Q.valueChanged.connect(self.clear_text)
-        self.slider_eta.valueChanged.connect(self.clear_text)
-        self.slider_h.valueChanged.connect(self.clear_text)
+        self.slider_Q.valueChanged.connect(lambda: self.clear_text( puissance=True, evaluation=True, perte=True))  #lambda ignore valeur envoyé par slider quand valueChanged, car s'attend a bool
+        self.slider_eta.valueChanged.connect(lambda: self.clear_text( puissance=True, evaluation=True, perte=True))
+        self.slider_h.valueChanged.connect(lambda: self.clear_text( puissance=True, evaluation=True, perte=True))
+
+        self.slider_conso.valueChanged.connect(lambda: self.clear_text(evaluation=True))
+        self.slider_L.valueChanged.connect(lambda: self.clear_text(perte=True))
         #if self.slider_Q.valueChanged:
         #    self.label_resultat.clear()
 
@@ -244,22 +292,16 @@ class Interface(QtWidgets.QWidget):
     def bouton_click(self):
         self.afficher_puissance()
         print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P: .2f} MW .")
-        powers = self.analyse.run_centrale(self.P)
-        #print(powers)
-        #self.afficher_graphique(powers)
-
-        #self.figure = partie_physique.run_centrale(Q, h, eta)
-        #self.canvas = FigureCanvas(self.figure)
-        #self.layout_droite.addWidget(self.canvas)
-        #print(self.y)
-        evaluation= self.analyse.evaluation_puissance(self.P)
-        self.label_evaluation.setText(evaluation)
-
-        self.analyse.afficher_graphique()
         self.afficher_perte()
+        self.analyse.run_centrale(self.P,self.perte)
+
 
         # sert à appeler la fonction quand on clique sur le bouton
         self.update_image()
+
+        self.analyse.afficher_graphique(self.consommation, self.perte)
+
+
 
 
 
@@ -281,38 +323,37 @@ class Interface(QtWidgets.QWidget):
     # pour le niveau de puissance.
     def update_image(self):
 
-        # prend la valeur de la consommation et la retourne en float pour la chaîne
-        consommation  = float(self.slider_conso.value())
+
 
         # chaîne qui determine quel image prendre selon leur proportion avec la puissance
-        if self.P < consommation * 0.10:
+        if self.P < self.consommation * 0.10:
             chemin = QPixmap("image/imagebarrage_lumiere0.png")
 
-        elif self.P < consommation * 0.20 :
+        elif self.P < self.consommation * 0.20 :
             chemin = QPixmap("image/imagebarrage_lumiere1.png")
 
-        elif self.P < consommation * 0.30 :
+        elif self.P < self.consommation * 0.30 :
             chemin = QPixmap("image/imagebarrage_lumiere2.png")
 
-        elif self.P < consommation * 0.40 :
+        elif self.P < self.consommation * 0.40 :
             chemin = QPixmap("image/imagebarrage_lumiere3.png")
 
-        elif self.P < consommation * 0.50 :
+        elif self.P < self.consommation * 0.50 :
             chemin = QPixmap("image/imagebarrage_lumiere4.png")
 
-        elif self.P < consommation * 0.60 :
+        elif self.P < self.consommation * 0.60 :
             chemin = QPixmap("image/imagebarrage_lumiere5.png")
 
-        elif self.P < consommation * 0.70 :
+        elif self.P < self.consommation * 0.70 :
             chemin = QPixmap("image/imagebarrage_lumiere6.png")
 
-        elif self.P < consommation * 0.80 :
+        elif self.P < self.consommation * 0.80 :
             chemin = QPixmap("image/imagebarrage_lumiere7.png")
 
-        elif self.P < consommation * 0.90 :
+        elif self.P < self.consommation * 0.90 :
             chemin = QPixmap("image/imagebarrage_lumiere8.png")
 
-        elif self.P < consommation :
+        elif self.P < self.consommation :
             chemin = QPixmap("image/imagebarrage_lumiere9.png")
 
         else :
@@ -328,9 +369,16 @@ class Interface(QtWidgets.QWidget):
             self.image_label.setPixmap(pixmap)
 
     # ====== supprime le texte de ces labels=======
-    def clear_text(self):
-        self.label_resultat.setText("Puissance: --- MW")
-        self.label_evaluation.setText("---")
+    def clear_text(self, puissance=False, evaluation= False, perte= False):
+        if puissance:
+            self.label_resultat.setText("Puissance: --- MW")
+        #self.label_evaluation.setText("---")
+        if evaluation:
+            self.label_avertissement.setText("---")
+            #self.label_avertissement.hide()
+        if perte:
+            self.label_perte.setText("Perte puissance: --- MW")
+
 
     #====== affichage de la puissance=======
     def afficher_puissance(self):
@@ -342,9 +390,13 @@ class Interface(QtWidgets.QWidget):
         self.P = self.calculs.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
         self.verifier_realisme()
-        # ======= vérification du réalisme des valeurs =======
+
+    # ======= vérification du réalisme des valeurs =======
     def verifier_realisme(self):
         avertissements = []
+
+        # prend la valeur de la consommation et la retourne en float pour la chaîne
+        self.consommation = self.slider_conso.value()
 
         # Limites pour une centrale de village (72 MW)
         if self.Q > 400:
@@ -357,11 +409,11 @@ class Interface(QtWidgets.QWidget):
         if self.h < 2:
             avertissements.append(f"⚠️ Hauteur de chute trop faible ({self.h} m), irréaliste.")
 
-        if self.P > 72:
-            avertissements.append(f"⚠️ Puissance de {self.P:.1f} MW dépasse les besoins du village.")
-        elif self.P < 72 and (self.Q > 0 and self.h > 0):
+        if self.P > self.consommation:
+            avertissements.append(f"⚠️ Puissance de {self.P:.1f} MW dépasse les besoins du village de {self.P- self.consommation:.1f} MW.")
+        elif self.P < self.consommation and (self.Q > 0 and self.h > 0):
             avertissements.append(
-                f"⚠️ Puissance de {self.P:.1f} MW est insuffisante pour un village.")
+                f"⚠️ Puissance de {self.P:.1f} MW est insuffisante pour un village, il lui manque {self.consommation-self.P:.1f} MW.")
 
         if avertissements:
             self.label_avertissement.setText("\n".join(avertissements))
@@ -371,31 +423,13 @@ class Interface(QtWidgets.QWidget):
             
     # ====== affichage de la perte de puissance=======
     def afficher_perte(self):
-        self.U = 745000
-        self.Pui = self.calculs.calculer_pertes(self.U)
-        print(self.Pui)
+        self.U = self.spinbox_U.value()
+        self.L= self.spinbox_L.value()
 
-    # ======= affichage du graphique=======
-    #def afficher_graphique(self, powers):
-    #    x = list(range(1, len(powers) + 1))
-    #    self.ax.clear()
-    #    self.ax.scatter(x,powers,s=10,color='steelblue', zorder=3)
-    #    self.ax.set_xlabel("Numéro de run", fontsize= 8)
-    #    self.ax.set_ylabel("Puissance (MW)", fontsize= 8)
-    #    self.ax.set_title("Puissance par run", fontsize= 10)
-    #    self.ax.minorticks_on()
-    #    self.ax.set_xticks(x)
-    #    #if max(powers)> 0:
-    #    #print(f"powers max: {max(powers)}")
-    #    #print(f"nbr ticks: {len(np.arange(0, max(powers), 200))}")
-    #    self.y = np.arange(0,max(powers), 200)
-    #    self.ax.set_yticks(self.y)
-    #    #self.xaxis.set_minor_locator(AutoMinorLocator())
-    #    self.ax.grid( color="grey", linestyle="-", linewidth=0.5, alpha=0.8)
-    #    self.ax.grid(which= "minor", linestyle= "-", linewidth= .5, alpha=0.7)
-    #    self.ax.set_axisbelow(True)
-    #    self.fig.tight_layout()
-    #    self.canvas.draw()
+
+        self.perte = self.calculs.calculer_pertes(self.calculs.puissance_W, self.L, self.U)
+        self.label_perte.setText(f"Perte puissance: {self.perte:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
+
 
 
 

@@ -18,11 +18,12 @@ class calculs_physique():
         pass
 
 
-    def calculer_pertes(self, U= 745_000, resistivite= 0.000_01, L=50_000, D= 0.135):
-        A= 2*math.pi*(D/2)
+    def calculer_pertes(self,p,L ,U, resistivite= 0.000_01 , D= 0.02):
+        A= math.pi*((D/2)**2)
         R = (resistivite*L)/A
-        I = self.puissance_W/U
+        I = p/(U*1000)
         perte = R*(I**2)
+        print(f"A={A:.6f}, R={R:.2f}, I={I:.2f}, perte={perte:.2f} W")
         return perte/1_000_000
 
 
@@ -39,6 +40,7 @@ class calculs_physique():
         rho: densité du fluide (kg/m³)
         """
         self.puissance_W= Q * h * eta * rho * g
+        print(self.puissance_W)
         return self.puissance_W
 
 
