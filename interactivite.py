@@ -5,9 +5,9 @@
 # interactivite.py
 ##############################################################################################################
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QSizePolicy
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QSizePolicy, QVBoxLayout, QComboBox
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap
+from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush
 
 from matplotlib.ticker import AutoMinorLocator
 import matplotlib.pyplot as plt
@@ -19,6 +19,7 @@ import csv
 import sys
 
 import numpy as np
+import pandas as pd
 
 from loi_physique import calculs_physique
 from partie_physique import AnalyseDonnees
@@ -29,6 +30,10 @@ class Interface(QtWidgets.QWidget):
         super().__init__()
         self.analyse = AnalyseDonnees()  # créer obj
         self.calculs = calculs_physique()
+
+        df = pd.read_csv("donnees_centrales.csv", sep = ";")
+        self.noms = df["Nom"].dropna().tolist()
+
         self.initUI()
         self.P = 9
 
@@ -59,6 +64,7 @@ class Interface(QtWidgets.QWidget):
         self.zone_interactive= QtWidgets.QWidget()  #crée zone ou tout interactif va etre (bas)
         self.layout_interactive= QtWidgets.QHBoxLayout(self.zone_interactive)  #crée layout horizontal a l'interieur de zone_interactive
         self.layout_principal.addWidget(self.zone_interactive, stretch=3)  # ajoute la zone au layout principal en prennant 30% du layout principal
+
 
             # -----zone Modif données(partie gauche de la zone interactive)-----
         self.panneau_Igauche = QtWidgets.QWidget()
@@ -197,6 +203,12 @@ class Interface(QtWidgets.QWidget):
         self.layout_gauche.addLayout(self.ligne_U)
         self.spinbox_U.setSuffix(" kV")
 
+    #------------combobox-------------#
+
+        self.combo = QtWidgets.QComboBox()
+        self.combo.addItems(self.noms)
+        self.combo.currentTextChanged.connect(self.chargement)
+
     # =============== CONNEXION ================ #
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
             #---- connexion Q spinbox avec slider --------#
@@ -223,9 +235,6 @@ class Interface(QtWidgets.QWidget):
         self.spinbox_U.valueChanged.connect(self.slider_U.setValue)
 
 
-
-
-
     # ============== LABEL RESULTAT =================#
         self.ligne_resultat= QtWidgets.QHBoxLayout()
         self.label_resultat = QtWidgets.QLabel("Puissance: MW")  #creation widget label pour afficher résulat puissance
@@ -233,6 +242,8 @@ class Interface(QtWidgets.QWidget):
         self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
         self.ligne_resultat.addWidget(self.label_resultat)
         self.ligne_resultat.addStretch()  #Ajout d'un espace a la ligne (layout)
+        self.ligne_resultat.addWidget(self.combo)
+        self.ligne_resultat.addStretch()
         self.ligne_resultat.addWidget(self.button)  #pour que le bouton soit a droite
         self.layout_gauche.addLayout(self.ligne_resultat)
         #self.ligne_evaluation = QtWidgets.QHBoxLayout()
@@ -310,6 +321,8 @@ class Interface(QtWidgets.QWidget):
 
         self.analyse.afficher_graphique(self.consommation, self.perte, self.P)
 
+    def chargement(self,texte):
+        self.l.setText(f"centrale sélectionnée : {texte}")
 
     # ========== AFFICHAGE IMAGE ========== #
     def create_image(self):
@@ -329,37 +342,37 @@ class Interface(QtWidgets.QWidget):
 
         # chaîne qui determine quel image prendre selon leur proportion avec la puissance
         if self.P < self.consommation * 0.10:
-            chemin = QPixmap("image/imagebarrage_lumiere0.png")
+            chemin = "image/imagebarrage_lumiere0.png"
 
         elif self.P < self.consommation * 0.20 :
-            chemin = QPixmap("image/imagebarrage_lumiere1.png")
+            chemin = "image/imagebarrage_lumiere1.png"
 
         elif self.P < self.consommation * 0.30 :
-            chemin = QPixmap("image/imagebarrage_lumiere2.png")
+            chemin = "image/imagebarrage_lumiere2.png"
 
         elif self.P < self.consommation * 0.40 :
-            chemin = QPixmap("image/imagebarrage_lumiere3.png")
+            chemin = "image/imagebarrage_lumiere3.png"
 
         elif self.P < self.consommation * 0.50 :
-            chemin = QPixmap("image/imagebarrage_lumiere4.png")
+            chemin = "image/imagebarrage_lumiere4.png"
 
         elif self.P < self.consommation * 0.60 :
-            chemin = QPixmap("image/imagebarrage_lumiere5.png")
+            chemin = "image/imagebarrage_lumiere5.png"
 
         elif self.P < self.consommation * 0.70 :
-            chemin = QPixmap("image/imagebarrage_lumiere6.png")
+            chemin = "image/imagebarrage_lumiere6.png"
 
         elif self.P < self.consommation * 0.80 :
-            chemin = QPixmap("image/imagebarrage_lumiere7.png")
+            chemin = "image/imagebarrage_lumiere7.png"
 
         elif self.P < self.consommation * 0.90 :
-            chemin = QPixmap("image/imagebarrage_lumiere8.png")
+            chemin = "image/imagebarrage_lumiere8.png"
 
         elif self.P < self.consommation :
-            chemin = QPixmap("image/imagebarrage_lumiere9.png")
+            chemin = "image/imagebarrage_lumiere9.png"
 
         else :
-            chemin = QPixmap("image/imagebarrage_lumiere10.png")
+            chemin ="image/imagebarrage_lumiere10.png"
 
         pixmap = QPixmap(chemin)
 
