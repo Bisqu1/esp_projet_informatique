@@ -8,7 +8,7 @@ from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QSizePolicy
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter, QColor, QPixmap, QPen, QBrush, QPixmap
-
+import pandas as pd
 from matplotlib.ticker import AutoMinorLocator
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -31,6 +31,8 @@ class Interface(QtWidgets.QWidget):
         self.calculs = calculs_physique()
         self.initUI()
         self.P = 9
+        self.df = pd.read_csv("donnees_centrales.csv", sep=";")
+        print(self.df)
 
         #apelle fonction pour afficher image de départ
         self.create_image()
@@ -83,13 +85,13 @@ class Interface(QtWidgets.QWidget):
         self.label_Q =QtWidgets.QLabel("débit (Q):")  #creation widget label
 
         self.slider_Q = QtWidgets.QSlider(Qt.Horizontal)  #creation widget slider horizontal
-        self.slider_Q.setRange(0,500)  #valeur max et min
+        self.slider_Q.setRange(0,1000)  #valeur max et min
         self.slider_Q.setValue(200)  #valeur depart
 
 
         self.spinbox_Q = QtWidgets.QSpinBox()  #creation widget doublespinbox
         self.spinbox_Q.setSuffix(" m³/s ")  # suffix(unité de mesure) de la valeur de doublespinbox
-        self.spinbox_Q.setRange(0, 500)
+        self.spinbox_Q.setRange(0, 1000)
         self.spinbox_Q.setValue(100)
         self.spinbox_Q.setSingleStep(5)  #Bond
 
@@ -197,6 +199,8 @@ class Interface(QtWidgets.QWidget):
         self.layout_gauche.addLayout(self.ligne_U)
         self.spinbox_U.setSuffix(" kV")
 
+
+
     # =============== CONNEXION ================ #
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
             #---- connexion Q spinbox avec slider --------#
@@ -233,6 +237,7 @@ class Interface(QtWidgets.QWidget):
         self.button.clicked.connect(self.bouton_click)  #quand le bouton est cliquer apelle fonction qui calcule puissance
         self.ligne_resultat.addWidget(self.label_resultat)
         self.ligne_resultat.addStretch()  #Ajout d'un espace a la ligne (layout)
+
         self.ligne_resultat.addWidget(self.button)  #pour que le bouton soit a droite
         self.layout_gauche.addLayout(self.ligne_resultat)
         #self.ligne_evaluation = QtWidgets.QHBoxLayout()
@@ -245,7 +250,13 @@ class Interface(QtWidgets.QWidget):
         self.ligne_perte.addWidget(self.label_perte)
         self.layout_gauche.addLayout(self.ligne_perte)
 
+        # =============== MENU DÉROULANT ================ #
+        self.combo = QtWidgets.QComboBox()
+        self.combo.addItems(self.df["Nom"])
+        self.combo.currentIndexChanged.connect(lambda i: print(f"Selected: {self.combo.currentText()}"))
 
+        self.ligne_resultat.addStretch()
+        self.ligne_resultat.addWidget(self.combo)
 
 
     # ============== LABEL AVERTISSEMENTS =================#
@@ -293,7 +304,8 @@ class Interface(QtWidgets.QWidget):
     # ==== appelée quand on clicque le bouton ===== #
     def bouton_click(self):
         self.afficher_puissance()
-        print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P: .2f} MW .")
+        print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P: .2f} MW . \n -------------------------------------------------------------")
+
         self.afficher_perte()
         self.analyse.run_centrale(self.P,self.perte)
 
@@ -387,8 +399,15 @@ class Interface(QtWidgets.QWidget):
         self.Q= self.slider_Q.value()
         self.h= self.slider_h.value()
         self.eta= self.slider_eta.value()/100  #divise par 100 pour reconvertir en decimal
+        self.U = self.spinbox_U.value()
+        self.L = self.spinbox_L.value()
 
-        self.P = self.calculs.calculer_puissance(self.Q,self.h,self.eta)/1_000_000  #diviser par 1million pour convertir en mega watts
+        #self.P = self.calculs.calculer_puissance(self.Q, self.h, self.eta) / 1_000_000  #puissance brut sans soustraction perte
+        self.P_brut = self.calculs.calculer_puissance(self.Q, self.h, self.eta) / 1_000_000
+        print(self.P_brut)
+
+        self.P = self.P_brut - (self.calculs.calculer_pertes(self.calculs.puissance_W, self.L, self.U))  #diviser par 1million pour convertir en mega watts
+
         self.label_resultat.setText(f"Puissance: {self.P:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
         self.verifier_realisme()
 

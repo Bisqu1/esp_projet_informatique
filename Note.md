@@ -11,7 +11,7 @@
     - appuyer bouton pour changer slider et équation afficher
     - Consommation differente en fonction de la journée (afficher plusieur point)
     - comparée production barrage avec valeur réel (appuyer sur preset et mettre valeur barrage connu)
-  
+    - ++ avoir base de données qui permet d,avoir valeur besoin pour le barrage avec librairie pandas
     
 - #### OPTIONNEL
      
@@ -47,3 +47,16 @@
   - A= 2 * π * (D/2) = 0.4241150082346221 m²
   - U = 745 kV = 745 000 V
   - ρ (résistivité du matériau du cable) = 0,01 Ω/km = 0,000 01 Ω/m
+
+consommation selon moment journée
+https://www.connaissancedesenergies.org/classement/consommation-electrique#:~:text=Aux%20heures%20de%20pointe%2C%20g%C3%A9n%C3%A9ralement%20le%20matin,d'%C3%A9clairage%2C%20notamment%20avec%20le%20retour%20%C3%A0%20domicile.
+
+- Base données intéressante:
+  - centrale QC: 
+    - https://www.hydroquebec.com/production/centrales.html (utilisé acuellement)
+    - https://www.cehq.gouv.qc.ca/barrages/default.asp#version-telechargeable (télécharger xls)
+    - https://fr.wikipedia.org/wiki/Liste_des_barrages_hydro%C3%A9lectriques_les_plus_puissants
+    - https://fr.wikipedia.org/wiki/Liste_des_plus_grandes_centrales_%C3%A9lectriques_au_monde
+  - mondiale:
+    - https://www.fao.org/aquastat/fr/databases/dams (juste barrage, pas données de puissanc ni débit)
+    

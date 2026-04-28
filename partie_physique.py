@@ -48,7 +48,7 @@ class AnalyseDonnees(FigureCanvasQTAgg):
 
         ##Fichier CSV
 
-        if len(self.powers) >= 10:
+        if len(self.powers) >= 30:
             del self.powers[0]  # supprime la plus vieille valeur
             del self.powers_pertes[0]
         self.powers.append(p)  # ajoute toujours le nouveau p
