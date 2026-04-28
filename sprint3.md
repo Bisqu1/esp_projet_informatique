@@ -8,7 +8,7 @@ Simulation d'une centrale hydroélectrique.
 - Alexis Paiement
 
 ## Besoins d'utilisateurs choisis  (PLUS DE BESOIN D'UTILISATEUR - BONUS) - sprint 3 
-- Comparer la production de puisance de la centrale avec la consommation d'énergie des villes connues (mettre des presets, en appuyant dessus met les valeurs de consommation de la ville)
+- Comparer la production de puissance de la centrale avec la consommation d'énergie des villes connues (mettre des presets, en appuyant dessus met les valeurs de consommation de la ville)
 - Avoir exemple de ce que represente X MW avec consommation objets quotidien
 - Consommation differente en fonction de la journée (afficher plusieur point)
 

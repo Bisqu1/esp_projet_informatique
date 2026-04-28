@@ -42,7 +42,7 @@ class Interface(QtWidgets.QWidget):
     def initUI(self):
 
     # ============= FENÊTRE =========== #
-        self.setWindowTitle('Simulation Central Hydroélectrique')  #titre
+        self.setWindowTitle('Simulation Centrale Hydroélectrique')  #titre
         self.setGeometry(100, 100, 1200, 800)  #position,dimension fenêtre
         #1200,570
     # ============ LAYOUT ============ #
@@ -245,34 +245,40 @@ class Interface(QtWidgets.QWidget):
         self.ligne_perte.addWidget(self.label_perte)
         self.layout_gauche.addLayout(self.ligne_perte)
 
+    # ============== LABEL ÉQUIVALENCES =================#
+        self.ligne_equiv = QtWidgets.QHBoxLayout()
+        self.label_equiv = QtWidgets.QLabel("Équivalences: ---")
+        self.label_equiv.setWordWrap(True)
+        self.label_equiv.setStyleSheet("""
+            QLabel {
+                background-color: #e8f5e9;
+                border: 1px solid #4caf50;
+                border-radius: 4px;
+                padding: 4px 6px;
+                color: #1b5e20;
+            }
+        """)
+        self.ligne_equiv.addWidget(self.label_equiv)
+        self.layout_gauche.addLayout(self.ligne_equiv)
+
 
 
 
     # ============== LABEL AVERTISSEMENTS =================#
-        self.label_avertissement = QtWidgets.QLabel("")
-        self.label_avertissement.setWordWrap(True)
-
+        self.label_avertissement = QtWidgets.QTextEdit()
+        self.label_avertissement.setReadOnly(True)
+        self.label_avertissement.setFixedHeight(52)
         self.label_avertissement.setStyleSheet("""
-                            QLabel {
-                                color: red;
-                                background-color: #fff3cd;
-                                border: 1px solid black;
-                                border-radius: 2px;
-                                max-height: 3em;
-                                min-height: 1em;
-                                padding: 2px 4px;
-                            }
-                        """)
-        self.label_avertissement.hide()  # caché par défaut
-
-        #self.ligne_avertissement = QtWidgets.QHBoxLayout()
-        #self.layout_gauche.addLayout(self.ligne_avertissement)
-        #self.ligne_avertissement.addWidget(self.label_avertissement)
+            QTextEdit {
+                background-color: #fff3cd;
+                border: 1px solid black;
+                border-radius: 2px;
+                padding: 2px 4px;
+                color: red;
+            }
+        """)
         self.label_avertissement.hide()
         self.layout_gauche.addWidget(self.label_avertissement)
-
-
-        self.label_avertissement.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
 
 
 
@@ -290,11 +296,12 @@ class Interface(QtWidgets.QWidget):
         # self.slider_h.valueChanged.connect(self.afficher_puissance)  #quand valeurs des sliders change apelle fonction qui recalcule puissance
         # self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
-    # ==== appelée quand on clicque le bouton ===== #
+    # ==== appelée quand on clique le bouton ===== #
     def bouton_click(self):
         self.afficher_puissance()
         print(f"Simulation a été lancée avec un  débit de {self.Q} m³/s, une hauteur de {self.h} m et un rendement de {self.eta}, ce qui donne une puissance de {self.P: .2f} MW .")
         self.afficher_perte()
+        self.afficher_equivalences()
         self.analyse.run_centrale(self.P,self.perte)
 
 
@@ -302,12 +309,6 @@ class Interface(QtWidgets.QWidget):
         self.update_image()
 
         self.analyse.afficher_graphique(self.consommation, self.perte, self.P)
-
-
-
-
-
-
 
 
     # ========== AFFICHAGE IMAGE ========== #
@@ -373,9 +374,10 @@ class Interface(QtWidgets.QWidget):
     def clear_text(self, puissance=False, evaluation= False, perte= False):
         if puissance:
             self.label_resultat.setText("Puissance: --- MW")
+            self.label_equiv.setText("Équivalences: ---")
         #self.label_evaluation.setText("---")
         if evaluation:
-            self.label_avertissement.setText("---")
+            self.label_avertissement.setPlainText("---")
             #self.label_avertissement.hide()
         if perte:
             self.label_perte.setText("Perte puissance: --- MW")
@@ -402,6 +404,7 @@ class Interface(QtWidgets.QWidget):
         # Limites pour une centrale de village (72 MW)
         if self.Q > 400:
             avertissements.append(f"⚠️ Débit trop élevé ({self.Q} m³/s), un village à typiquement besoin de moins de 400 m³/s de débit.")
+
         if self.Q < 10:
             avertissements.append(f"⚠️ Débit trop faible ({self.Q} m³/s), production négligeable.")
 
@@ -417,7 +420,7 @@ class Interface(QtWidgets.QWidget):
                 f"⚠️ Puissance de {self.P:.1f} MW est insuffisante pour un village, il lui manque {self.consommation-self.P:.1f} MW.")
 
         if avertissements:
-            self.label_avertissement.setText("\n".join(avertissements))
+            self.label_avertissement.setPlainText("\n".join(avertissements))
             self.label_avertissement.show()
         else:
             self.label_avertissement.hide()
@@ -431,6 +434,21 @@ class Interface(QtWidgets.QWidget):
         self.perte = self.calculs.calculer_pertes(self.calculs.puissance_W, self.L, self.U)
         self.label_perte.setText(f"Perte puissance: {self.perte:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
+    def afficher_equivalences(self):
+        P_W = self.P * 1_000_000  # Convertir MW en W pour faciliter la compréhension des exemples
+
+        #Consommations typiques exemples
+        equivalences = {
+            "💡 Ampoules DEL (10 W)": P_W / 10,
+            "📺 Téléviseurs (100 W)": P_W / 100,
+            "🧺🫧 Laveuses (500 W)": P_W / 500,
+            "🏠 Maisons québécoises (1.2 kW)": P_W / 1_200,
+            "🚗 Voitures électriques (7 kW)": P_W / 7_000,
+            "🏪 Épiceries (50 kW)": P_W / 50_000,
+        }
+
+        lignes = [f"{nom}: {int(val):,}".replace(",", " ") for nom, val in equivalences.items()]
+        self.label_equiv.setText("Avec " + f"{self.P:.2f} MW, on peut alimenter :\n" + "\n".join(lignes))
 
 
 
