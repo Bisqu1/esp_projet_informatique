@@ -24,10 +24,10 @@
       - R: Résistance du cable (Ω)
       - L: Longueur du cable (m)
       - A: Aire du cable(m²)
-      - ρ: Resistivité du materiau du cable (Ω*m)
+      - ρ: Résistivité du matériau du cable (Ω*m)
   
     - P = ρ * η * Q * g * h
-      - P: Puissance produit par le barrage hydroléletrique (W)
+      - P: Puissance produite par le barrage hydrolélectrique (W)
       - ρ: Masse volumique de l'eau (kg/m³)
       - η: Rendement énergétique de la turbine
       - Q: Débit de l,eau (m³/s)
