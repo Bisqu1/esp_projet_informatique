@@ -4,6 +4,7 @@
 # 420-ESP-MA INTÉGRATION DES ACQUIS EN SCIENCES DE LA NATURE - PROJET EN INFORMATIQUE: Simulation d'une central hydroélectrique
 # Loi physique
 ##############################################################################################################
+import math
 
 
 #rendement=0.9
@@ -12,20 +13,48 @@
 #debit= 100
 #hauteur=50
 
-    #fonction equation central
-def calculer_puissance(Q ,h ,eta ,rho=1000,g=9.81):
-    """
-    Calcule la puissance d'une centrale hydroélectrique.
-    P = eta * rho * g * h * Q
+class calculs_physique():
+    def __init__(self):
+        pass
 
-    Q: débit (m³/s)
-    h: hauteur de chute (m)
-    eta: rendement de la turbine [0,1]
-    g: gravité (m/s²)
-    rho: densité du fluide (kg/m³)
-    """
-    puissance_W= Q * h * eta * rho * g
-    return puissance_W
+
+    def calculer_pertes(self,p,L ,U, resistivite= 0.000_01 , D= 0.02):
+        """
+        Calcule la perte de puissance du transport d'énergie.
+        Perte = R * (I**2)
+
+        D: diamètre (m)
+        A: aire du segment de cable (m²)
+        R: resistance (ohm)
+        L: longueur de du cable (m)
+        resistivite: resistivite du materiel du cable (ohm * m)
+        I: intensité du courant (A)
+        U: tension parcourant cable (V)
+        p: puissance produit par la centrale (W)
+        """
+        A= math.pi*((D/2)**2)
+        R = (resistivite*L)/A
+        I = p/(U*1000)
+        perte = R*(I**2)
+        print(f"A={A:.6f}, R={R:.2f}, I={I:.2f}, perte={perte:.2f} W")
+        return perte/1_000_000
+
+
+    #fonction equation puissance central
+    def calculer_puissance(self, Q ,h ,eta ,rho=1000,g=9.81):
+        """
+        Calcule la puissance d'une centrale hydroélectrique.
+        P = eta * rho * g * h * Q
+
+        Q: débit (m³/s)
+        h: hauteur de chute (m)
+        eta: rendement de la turbine [0,1]
+        g: gravité (m/s²)
+        rho: densité du fluide (kg/m³)
+        """
+        self.puissance_W= Q * h * eta * rho * g
+        print(self.puissance_W)
+        return self.puissance_W
 
 
 
