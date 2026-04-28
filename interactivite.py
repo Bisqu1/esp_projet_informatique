@@ -42,7 +42,7 @@ class Interface(QtWidgets.QWidget):
     def initUI(self):
 
     # ============= FENÊTRE =========== #
-        self.setWindowTitle('Simulation Central Hydroélectrique')  #titre
+        self.setWindowTitle('Simulation Centrale Hydroélectrique')  #titre
         self.setGeometry(100, 100, 1200, 800)  #position,dimension fenêtre
         #1200,570
     # ============ LAYOUT ============ #
@@ -435,7 +435,7 @@ class Interface(QtWidgets.QWidget):
         self.label_perte.setText(f"Perte puissance: {self.perte:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
     def afficher_equivalences(self):
-        P_W = self.P * 1_000_000  # Convertir MW → W pour faciliter la compréhension des exemples
+        P_W = self.P * 1_000_000  # Convertir MW en W pour faciliter la compréhension des exemples
 
         #Consommations typiques exemples
         equivalences = {
