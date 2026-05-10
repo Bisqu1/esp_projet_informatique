@@ -31,8 +31,8 @@ class Interface(QtWidgets.QWidget):
         self.analyse = AnalyseDonnees()  # créer obj
         self.calculs = calculs_physique()
 
-        df = pd.read_csv("donnees_centrales.csv", sep = ";")
-        self.noms = df["Nom"].dropna().tolist()
+        self.df = pd.read_csv("donnees_centrales.csv", sep = ";")
+        self.noms = self.df["Nom"]
 
         self.initUI()
         self.P = 9
@@ -207,7 +207,10 @@ class Interface(QtWidgets.QWidget):
 
         self.combo = QtWidgets.QComboBox()
         self.combo.addItems(self.noms)
+
         self.combo.currentTextChanged.connect(self.chargement)
+
+
 
     # =============== CONNEXION ================ #
         # ----CONNEXION spinbox avec slider----- pour que quand valeur de slider change, celle de spin box aussi et vice versa
@@ -321,8 +324,18 @@ class Interface(QtWidgets.QWidget):
 
         self.analyse.afficher_graphique(self.consommation, self.perte, self.P)
 
-    def chargement(self,texte):
-        self.l.setText(f"centrale sélectionnée : {texte}")
+    def chargement(self):
+        nom = self.combo.currentText()
+        index = self.df.index[self.df["Nom"] == nom].item()
+        #df.index[df['Nom'] == 'Alice'].item()
+        self.hauteur_chargement = int(round(float((self.df.loc[index, "Hauteur de chute2 (m)"]).replace(",","."))))
+        self.slider_h.setValue(self.hauteur_chargement)
+        self.puissance_chargement = float((self.df.loc[index,"Puissance installée1 (MW)"]).replace(" ",""))
+        self.label_resultat.setText(f"Puissance: {self.puissance_chargement:.2f} MW")
+        self.debit_chargement = (self.puissance_chargement/(self.hauteur_chargement *0.9 *9.8*1000))*1000000
+        self.slider_Q.setValue(int(self.debit_chargement))
+
+
 
     # ========== AFFICHAGE IMAGE ========== #
     def create_image(self):
