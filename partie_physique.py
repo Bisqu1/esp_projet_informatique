@@ -36,16 +36,7 @@ class AnalyseDonnees(FigureCanvasQTAgg):
             return f"Il y a {p - 72: .2f} MW en surplus"
 
     def run_centrale(self,p,perte):
-        #rendement = float(input("Quelle est le rendement de la centrale: "))
-        #while not (0.6 <= eta <= 0.9):
-        #    print("Le rendement de la centrale doit être compris entre 0.6 et 0.9")
-        #    eta = float(input("Quelle est le rendement de la centrale: "))
-    #
-        ##débit = float(input("Quelle est le débit d'eau: "))
-        #while not (10 <= Q <= 1000):
-        #    print("Le débit de la centrale doit être compris entre 10 et 1000 m³/s")
-        #    Q = float(input("Quelle est le débit d'eau: "))
-
+        
         ##Fichier CSV
 
         if len(self.powers) >= 10:
@@ -88,7 +79,6 @@ class AnalyseDonnees(FigureCanvasQTAgg):
         self.ax2.set_ylabel("Pertes (MW)", fontsize=8, color='orange')
         self.ax2.yaxis.set_label_position("right")
         self.ax2.yaxis.tick_right()
-        #self.ax2.plot(self.x,self.powers_pertes, linestyle="--", marker="*",color="y")
 
         #puissance
         couleurs = ['green' if p >= consommation else 'red' for p in self.powers]
@@ -99,16 +89,9 @@ class AnalyseDonnees(FigureCanvasQTAgg):
         self.ax.set_title("Puissance par simulation", fontsize=10)
         self.ax.minorticks_on()
         self.ax.set_xticks(self.x)
-        # if max(powers)> 0:
-        # print(f"powers max: {max(self.powers)}")
-        # print(f"nbr ticks: {len(np.arange(0, max(powself.powersers), 200))}")
 
-        # graduation: 0, max(self.powers, self.powers_pertes, consommation), 200
-        #self.y = np.arange(0, max(self.powers), 200)
         self.y = np.arange(0, max(max(self.powers), max(self.powers_pertes), consommation), 200)
         self.ax.set_yticks(self.y)
-        # self.xaxis.set_minor_locator(AutoMinorLocator())
-        #self.ax.plot(self.x,self.powers, linestyle="-", marker=".",color="c" )
 
         #consommation
         self.ax.axhline( consommation, color='red', linestyle='--', linewidth=1, label=f"Consommation ({consommation} MW)")
@@ -120,6 +103,3 @@ class AnalyseDonnees(FigureCanvasQTAgg):
         self.ax.set_axisbelow(True)
         self.fig.tight_layout()
         self.draw()
-
-    def afficher_tableau(self):
-        pass
