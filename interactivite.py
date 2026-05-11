@@ -249,10 +249,6 @@ class Interface(QtWidgets.QWidget):
         self.ligne_resultat.addStretch()
         self.ligne_resultat.addWidget(self.button)  #pour que le bouton soit a droite
         self.layout_gauche.addLayout(self.ligne_resultat)
-        #self.ligne_evaluation = QtWidgets.QHBoxLayout()
-        #self.layout_gauche.addLayout(self.ligne_evaluation)
-        #self.label_evaluation = QtWidgets.QLabel()
-        #self.ligne_evaluation.addWidget(self.label_evaluation)
         self.ligne_perte =QtWidgets.QHBoxLayout()
 
         self.label_perte = QtWidgets.QLabel("Perte de puissance: MW")
@@ -304,11 +300,6 @@ class Interface(QtWidgets.QWidget):
         self.slider_conso.valueChanged.connect(lambda: self.clear_text(evaluation=True))
         self.slider_L.valueChanged.connect(lambda: self.clear_text(perte=True))
         self.slider_U.valueChanged.connect(lambda: self.clear_text(perte=True))
-        #if self.slider_Q.valueChanged:
-        #    self.label_resultat.clear()
-
-        # self.slider_h.valueChanged.connect(self.afficher_puissance)  #quand valeurs des sliders change apelle fonction qui recalcule puissance
-        # self.slider_eta.valueChanged.connect(self.afficher_puissance)
 
     # ==== appelée quand on clique le bouton ===== #
     def bouton_click(self):
