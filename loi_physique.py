@@ -57,7 +57,3 @@ class calculs_physique():
         return self.puissance_W
 
 
-
-
-    #appel fonction
-#print(calculer_puissance(rendement,densite,gravite,debit,hauteur,), "MW")
