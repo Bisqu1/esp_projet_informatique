@@ -36,7 +36,7 @@ class AnalyseDonnees(FigureCanvasQTAgg):
             return f"Il y a {p - 72: .2f} MW en surplus"
 
     def run_centrale(self,p,perte):
-        
+
         ##Fichier CSV
 
         if len(self.powers) >= 10:
@@ -90,7 +90,19 @@ class AnalyseDonnees(FigureCanvasQTAgg):
         self.ax.minorticks_on()
         self.ax.set_xticks(self.x)
 
-        self.y = np.arange(0, max(max(self.powers), max(self.powers_pertes), consommation), 200)
+
+        #graduation axe y selon puissance
+        graduation_max =max(max(self.powers), max(self.powers_pertes), consommation)
+        print(graduation_max)
+        if graduation_max <=200:
+            pas=20
+        elif graduation_max <=1000:
+            pas= 100
+        elif graduation_max <=5000:
+            pas= 500
+        else:
+            pas = 2500
+        self.y = np.arange(0, graduation_max, pas)
         self.ax.set_yticks(self.y)
 
         #consommation
