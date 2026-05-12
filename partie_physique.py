@@ -83,7 +83,7 @@ class AnalyseDonnees(FigureCanvasQTAgg):
         #puissance
         couleurs = ['green' if p >= consommation else 'red' for p in self.powers]
         self.ax.clear()
-        self.ax.scatter(self.x, self.powers, s=10, color=couleurs, zorder=3, label=f"Puissance ({puissance: .2f}MW)")
+        self.ax.scatter(self.x, self.powers, s=30, color=couleurs, zorder=3, label=f"Puissance ({puissance: .2f}MW)")
         self.ax.set_xlabel("Numéro de simulation", fontsize=8)
         self.ax.set_ylabel("Puissance (MW)", fontsize=8)
         self.ax.set_title("Puissance par simulation", fontsize=10)
