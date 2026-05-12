@@ -321,7 +321,7 @@ class Interface(QtWidgets.QWidget):
         #df.index[df['Nom'] == 'Alice'].item()
         self.hauteur_chargement = int(round(float((self.df.loc[index, "Hauteur de chute2 (m)"]).replace(",","."))))
         self.slider_h.setValue(self.hauteur_chargement)
-        self.puissance_chargement = float((self.df.loc[index,"Puissance installée1 (MW)"]).replace(" ",""))
+        self.puissance_chargement = float(self.df.loc[index,"Puissance installée1 (MW)"])
         self.label_resultat.setText(f"Puissance: {self.puissance_chargement:.2f} MW")
         self.debit_chargement = (self.puissance_chargement/(self.hauteur_chargement *0.9 *9.8*1000))*1000000
         self.slider_Q.setValue(int(self.debit_chargement))
