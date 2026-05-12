@@ -89,15 +89,15 @@ class Interface(QtWidgets.QWidget):
         self.label_Q =QtWidgets.QLabel("débit (Q):")  #creation widget label
 
         self.slider_Q = QtWidgets.QSlider(Qt.Horizontal)  #creation widget slider horizontal
-        self.slider_Q.setRange(0,500)  #valeur max et min
-        self.slider_Q.setValue(200)  #valeur depart
+        self.slider_Q.setRange(0,9000)  #valeur max et min
+        self.slider_Q.setValue(1000)  #valeur depart
 
 
         self.spinbox_Q = QtWidgets.QSpinBox()  #creation widget doublespinbox
         self.spinbox_Q.setSuffix(" m³/s ")  # suffix(unité de mesure) de la valeur de doublespinbox
-        self.spinbox_Q.setRange(0, 500)
-        self.spinbox_Q.setValue(100)
-        self.spinbox_Q.setSingleStep(5)  #Bond
+        self.spinbox_Q.setRange(0, 9000)
+        self.spinbox_Q.setValue(1000)
+        self.spinbox_Q.setSingleStep(100)  #Bond
 
         #ajoute les 3 widgets sur la ligne de gauche a droit
         self.ligne_Q.addWidget(self.label_Q)
@@ -251,7 +251,7 @@ class Interface(QtWidgets.QWidget):
         self.layout_gauche.addLayout(self.ligne_resultat)
         self.ligne_perte =QtWidgets.QHBoxLayout()
 
-        self.label_perte = QtWidgets.QLabel("Perte de puissance: MW")
+        self.label_perte = QtWidgets.QLabel("Perte de puissance par le transport: MW")
         self.ligne_perte.addWidget(self.label_perte)
         self.layout_gauche.addLayout(self.ligne_perte)
 
@@ -318,7 +318,6 @@ class Interface(QtWidgets.QWidget):
     def chargement(self):
         nom = self.combo.currentText()
         index = self.df.index[self.df["Nom"] == nom].item()
-        #df.index[df['Nom'] == 'Alice'].item()
         self.hauteur_chargement = int(round(float((self.df.loc[index, "Hauteur de chute2 (m)"]).replace(",","."))))
         self.slider_h.setValue(self.hauteur_chargement)
         self.puissance_chargement = float(self.df.loc[index,"Puissance installée1 (MW)"])
@@ -397,7 +396,7 @@ class Interface(QtWidgets.QWidget):
             self.label_avertissement.setPlainText("---")
             #self.label_avertissement.hide()
         if perte:
-            self.label_perte.setText("Perte puissance: --- MW")
+            self.label_perte.setText("Perte de puissance par le transport: --- MW")
 
 
     # ====== affichage de la puissance ======= #
@@ -419,20 +418,28 @@ class Interface(QtWidgets.QWidget):
         self.consommation = self.slider_conso.value()
 
         # Limites pour une centrale de village (72 MW)
-        if self.Q > 400:
-            avertissements.append(f"⚠️ Débit trop élevé ({self.Q} m³/s), un village à typiquement besoin de moins de 400 m³/s de débit.")
+        # Débit vs hauteur
 
         if self.Q < 10:
             avertissements.append(f"⚠️ Débit trop faible ({self.Q} m³/s), production négligeable.")
 
-        if self.h > 200:
-            avertissements.append(f"⚠️ Hauteur de chute très élevée ({self.h} m), rare pour un village.")
-        if self.h < 2:
-            avertissements.append(f"⚠️ Hauteur de chute trop faible ({self.h} m), irréaliste.")
+        if self.Q > 3000:
+            avertissements.append(f"⚠️ Débit très élevé ({self.Q} m³/s), typique d'un grand cours d'eau, rare pour un simple village.")
+            if self.h > 150:
+                #Si le débit est fort, avoir une haute chute est rare car les hautes chutes se trouvent en montagne, là ou les rivières débutent et ont donc peu d'eau et, peu de volume, peu de débit
+                avertissements.append(f"⚠️ Un débit de {self.Q} m³/s combiné à {self.h} m de chute est très rare.")
 
+
+        #Hauteur
+        if self.h > 200:
+            avertissements.append(f"⚠️ Hauteur de chute très élevée ({self.h} m),  rare pour un village.")
+        if self.h < 2:
+            avertissements.append(f"⚠️ Hauteur de chute trop faible ({self.h} m), trop faible pour activer les turbines.")
+
+        #puissance vs consommation
         if self.P > self.consommation:
             avertissements.append(f"⚠️ Puissance de {self.P:.1f} MW dépasse les besoins du village de {self.P- self.consommation:.1f} MW.")
-        elif self.P < self.consommation and (self.Q > 0 and self.h > 0):
+        if self.P < self.consommation and (self.Q > 0 and self.h > 0):
             avertissements.append(
                 f"⚠️ Puissance de {self.P:.1f} MW est insuffisante pour un village, il lui manque {self.consommation-self.P:.1f} MW.")
 
@@ -449,7 +456,7 @@ class Interface(QtWidgets.QWidget):
 
 
         self.perte = self.calculs.calculer_pertes(self.calculs.puissance_W, self.L, self.U)
-        self.label_perte.setText(f"Perte puissance: {self.perte:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
+        self.label_perte.setText(f"Perte de puissance par le transport: {self.perte:.2f} MW")  #modifie label resultat en ajoutant valeur puissance
 
     def afficher_equivalences(self):
         P_W = self.P * 1_000_000  # Convertir MW en W pour faciliter la compréhension des exemples
