@@ -20,6 +20,9 @@ Simulation d'une centrale hydroélectrique.
 - numpy
 - pandas
 
+## Base de données
+- Hydro Québec: https://www.hydroquebec.com/production/centrales.html
+
 ## Fichier à run
 ```bash
 python interactivite.py
