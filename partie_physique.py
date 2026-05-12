@@ -92,7 +92,7 @@ class AnalyseDonnees(FigureCanvasQTAgg):
 
 
         #graduation axe y selon puissance
-        graduation_max =max(max(self.powers), max(self.powers_pertes), consommation)
+        graduation_max =max(max(self.powers), consommation)
         print(graduation_max)
         if graduation_max <=200:
             pas=20
